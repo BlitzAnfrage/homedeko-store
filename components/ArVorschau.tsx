@@ -198,8 +198,8 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/88 flex items-center justify-center p-3" onClick={zu}>
-      <div className="bg-surface rounded-lg w-full max-w-3xl max-h-[94vh] overflow-y-auto relative" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-black/88 flex items-stretch sm:items-center justify-center sm:p-3" onClick={zu}>
+      <div className="bg-surface w-full h-full sm:h-auto sm:rounded-lg sm:max-w-3xl sm:max-h-[94vh] overflow-y-auto relative flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-line">
           <div className="text-[15px] font-bold">„{p.motiv.name}“ an deiner Wand</div>
           <button onClick={zu} aria-label="Schließen" className="p-2 text-muted hover:text-ink"><IconClose size={22} /></button>
@@ -254,27 +254,28 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
 
         {/* ── Upload-Screen (Desktop / keine Kamera) — clean & premium ── */}
         {phase === "upload" && (
-          <div className="fade-in">
-            {/* stimmungsvolles Vorschaubild als Blickfang */}
-            <div className="relative h-[220px] sm:h-[260px] overflow-hidden">
+          <div className="fade-in flex-1 flex flex-col">
+            {/* großes stimmungsvolles Vorschaubild — füllt oben */}
+            <div className="relative flex-1 min-h-[300px] overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={motiv} alt="" className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-              <div className="absolute left-5 bottom-5 right-5 text-white">
-                <div className="text-[11px] tracking-[0.2em] uppercase font-semibold text-gold-bright mb-1.5">Live an deiner Wand</div>
-                <h3 className="font-display text-[26px] sm:text-3xl leading-[1.15]">So sieht „{p.motiv.name}“ bei dir aus</h3>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+              <div className="absolute left-6 bottom-6 right-6 text-white">
+                <div className="text-[11px] tracking-[0.2em] uppercase font-semibold text-gold-bright mb-2">Live an deiner Wand</div>
+                <h3 className="font-display text-[28px] sm:text-3xl leading-[1.15]">So sieht „{p.motiv.name}“ bei dir aus</h3>
               </div>
             </div>
-            <div className="p-6 sm:p-8 text-center">
+            {/* Aktionsbereich unten — fest */}
+            <div className="p-6 sm:p-8 text-center shrink-0">
               <p className="text-[14.5px] text-muted max-w-md mx-auto leading-relaxed">
                 Lade ein Foto deiner Wand hoch — das Motiv wird maßstabsgetreu daraufgelegt,
                 in deiner gewählten Größe.
               </p>
-              <label className="btn-gold px-8 py-4 text-[15.5px] cursor-pointer inline-flex items-center gap-2.5 mt-6">
+              <label className="btn-gold w-full sm:w-auto px-8 py-4 text-[15.5px] cursor-pointer inline-flex items-center justify-center gap-2.5 mt-5">
                 <IconCamera size={20} /> Foto aufnehmen oder hochladen
                 <input type="file" accept="image/*" capture="environment" className="hidden" onChange={fotoLaden} />
               </label>
-              <p className="mt-5 text-[11.5px] text-muted">Dein Foto bleibt auf deinem Gerät — es wird nichts hochgeladen.</p>
+              <p className="mt-4 text-[11.5px] text-muted">Dein Foto bleibt auf deinem Gerät — es wird nichts hochgeladen.</p>
             </div>
           </div>
         )}
