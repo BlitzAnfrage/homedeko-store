@@ -122,30 +122,15 @@ export default function BuyBox({ p }: { p: Produkt }) {
       <div className="mb-5">
         <div className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-muted mb-2">Größe wählen</div>
         <div className="grid grid-cols-2 gap-2">
-          {groessen.map((g, i) => {
-            const s = Math.min(30 / (g.h ?? 50), 44 / (panels * (g.b ?? 50)));
-            return (
-              <button key={g.label} className="opt px-2.5 py-2.5 text-left" data-selected={i === gIdx} onClick={() => setGIdx(i)}>
-                <span className="flex items-center gap-2.5">
-                  <span className="flex items-end gap-[2px] w-[48px] justify-center shrink-0" style={{ height: 32 }}>
-                    {Array.from({ length: panels }).map((_, pi) => (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img key={pi} src={motivBild} alt="" aria-hidden
-                        className="object-cover rounded-[1px] border border-line"
-                        style={{ width: (g.b ?? 50) * s, height: (g.h ?? 50) * s }} />
-                    ))}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[13px] font-semibold leading-tight whitespace-nowrap">{g.label}</span>
-                    <span className="flex items-center gap-1.5 mt-0.5">
-                      <span className="text-[12.5px] text-muted">{euro(g.preis)}</span>
-                      {g.beliebt && <span className="text-[9px] font-bold uppercase tracking-wide bg-gold text-white rounded-[3px] px-1 py-0.5">Top</span>}
-                    </span>
-                  </span>
-                </span>
+          {groessen.map((g, i) => (
+              <button key={g.label} className="opt relative px-3 py-2.5 text-left" data-selected={i === gIdx} onClick={() => setGIdx(i)}>
+                {g.beliebt && (
+                  <span className="absolute right-2 top-2 text-[8.5px] font-bold uppercase tracking-wide bg-gold text-white rounded-[3px] px-1 py-0.5">Top</span>
+                )}
+                <span className="block text-[13px] font-semibold leading-tight whitespace-nowrap">{g.label}</span>
+                <span className="block text-[13px] text-muted mt-0.5">{euro(g.preis)}</span>
               </button>
-            );
-          })}
+          ))}
         </div>
       </div>
 

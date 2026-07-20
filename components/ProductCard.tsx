@@ -12,7 +12,7 @@ export default function ProductCard({ p, prio }: { p: Produkt; prio?: boolean })
   const welt = KATEGORIEN.find((k) => k.slug === weltSlug);
   const farbe = WELT_FARBEN[weltSlug];
   return (
-    <Link href={`/produkt/${p.id}`} className="card group flex flex-col overflow-hidden">
+    <Link href={`/produkt/${p.id}`} className="card group flex flex-col overflow-hidden h-full">
       <span className="relative block aspect-square overflow-hidden bg-bg">
         {bild && (
           /* eslint-disable-next-line @next/next/no-img-element */
@@ -39,20 +39,19 @@ export default function ProductCard({ p, prio }: { p: Produkt; prio?: boolean })
           </span>
         )}
       </span>
-      <span className="flex flex-col gap-1 p-3.5">
-        <span className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 min-w-0">
+      <span className="flex flex-col gap-1 p-3.5 flex-1">
+        <span className="flex items-start justify-between gap-2 min-w-0">
           <span className="text-[11px] uppercase tracking-[0.12em] text-muted truncate">{PRODUKTARTEN[p.art].name}</span>
           {welt && farbe && (
-            <span className="chip self-start shrink-0 whitespace-nowrap" style={{ color: farbe.fg, background: farbe.bg }}>{welt.name.split(" & ")[0]}</span>
+            <span className="chip shrink-0 whitespace-nowrap" style={{ color: farbe.fg, background: farbe.bg }}>{welt.name.split(" & ")[0]}</span>
           )}
         </span>
-        <span className="text-[15px] font-semibold leading-snug group-hover:text-gold-ink">{p.motiv.name}</span>
-        <span className="text-[12.5px] text-muted leading-snug">{p.motiv.untertitel}</span>
-        <span className="mt-1 text-[15px]">
-          ab <span className="font-bold">{euro(p.ab)}</span>
-          {p.posterAb
-            ? <span className="text-[12px] text-ok font-medium"> · als Poster schon ab {euro(p.posterAb)}</span>
-            : beliebt && <span className="text-[12px] text-muted"> · beliebt: {beliebt.label} für {euro(beliebt.preis)}</span>}
+        {/* feste Zeilenzahl → alle Karten gleich hoch */}
+        <span className="text-[15px] font-semibold leading-snug group-hover:text-gold-ink line-clamp-1">{p.motiv.name}</span>
+        <span className="text-[12.5px] text-muted leading-snug line-clamp-2 min-h-[2.6em]">{p.motiv.untertitel}</span>
+        <span className="mt-auto pt-1.5">
+          <span className="text-[15px]">ab <span className="font-bold">{euro(p.ab)}</span></span>
+          {p.posterAb && <span className="block text-[11.5px] text-ok font-medium leading-tight">Poster ab {euro(p.posterAb)}</span>}
         </span>
       </span>
     </Link>
