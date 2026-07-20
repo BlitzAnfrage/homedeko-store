@@ -48,6 +48,18 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
   }, []);
 
   /* Beim Öffnen: direkt in die Kamera. Klappt es nicht → Upload-Ansicht. */
+  /* Hintergrund-Scroll sperren, solange das AR-Fenster offen ist (iOS-fest) */
+  useEffect(() => {
+    if (!offen) return;
+    const y = window.scrollY;
+    const s = document.body.style;
+    s.position = "fixed"; s.top = `-${y}px`; s.left = "0"; s.right = "0"; s.overflow = "hidden";
+    return () => {
+      s.position = ""; s.top = ""; s.left = ""; s.right = ""; s.overflow = "";
+      window.scrollTo(0, y);
+    };
+  }, [offen]);
+
   useEffect(() => {
     if (!offen) {
       kameraStoppen();
@@ -210,41 +222,47 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
           <div className="p-16 text-center text-muted text-[14px]">Kamera wird gestartet …</div>
         )}
 
-        {/* ── Sucher (Kamera-first, Führung im Bild) ── */}
+        {/* ── Sucher (Kamera-first) — vollflächig & interaktiv ── */}
         {phase === "sucher" && (
-          <div className="relative w-full aspect-[4/3] bg-ink-strong overflow-hidden">
+          <div className="relative flex-1 bg-ink-strong overflow-hidden">
             <video ref={videoRef} playsInline muted className="absolute inset-0 w-full h-full object-cover" />
 
-            {/* Drittel-Raster wie in der Kamera-App */}
+            {/* Interaktiver Ausricht-Rahmen: wird grün wenn gerade gehalten */}
+            <div className="absolute inset-4 pointer-events-none rounded-[10px] border-2 transition-colors duration-300"
+              style={{ borderColor: gerade ? "var(--ok)" : "rgba(255,255,255,.55)", boxShadow: gerade ? "0 0 0 3px rgba(46,125,67,.35)" : "none" }} />
+            {/* Eck-Marken für den Kamera-App-Look */}
+            {["left-4 top-4 border-l-2 border-t-2 rounded-tl-[10px]", "right-4 top-4 border-r-2 border-t-2 rounded-tr-[10px]",
+              "left-4 bottom-4 border-l-2 border-b-2 rounded-bl-[10px]", "right-4 bottom-4 border-r-2 border-b-2 rounded-br-[10px]"].map((c) => (
+              <span key={c} className={`absolute ${c} h-8 w-8 pointer-events-none transition-colors duration-300`}
+                style={{ borderColor: gerade ? "var(--ok)" : "#fff" }} />
+            ))}
+
+            {/* Drittel-Raster dezent */}
             <span className="raster-linie left-1/3 top-0 bottom-0 w-px" />
             <span className="raster-linie left-2/3 top-0 bottom-0 w-px" />
             <span className="raster-linie top-1/3 left-0 right-0 h-px" />
             <span className="raster-linie top-2/3 left-0 right-0 h-px" />
 
-            {/* Live-Horizont: dreht mit dem Handy, grün wenn gerade */}
+            {/* Live-Wasserwaage: Horizontlinie dreht mit dem Handy, grün wenn gerade */}
             {neigung && (
               <div className="absolute left-0 right-0 top-1/2 flex justify-center pointer-events-none">
-                <div className="horizont w-[42%]" data-ok={gerade}
+                <div className="horizont w-[50%]" data-ok={gerade}
                   style={{ transform: `rotate(${Math.max(-25, Math.min(25, -neigung.gamma))}deg)` }} />
               </div>
             )}
 
-            {/* Ein dezenter Hinweis im Bild — verschwindet von selbst */}
-            <div className={`absolute top-3 inset-x-0 flex justify-center px-3 transition-opacity duration-700 ${hinweisAus ? "opacity-0" : "opacity-100"}`}>
-              <span className="glas">Wand frontal einrahmen — dann auslösen</span>
+            {/* Großer Status-Hinweis oben — führt aktiv */}
+            <div className="absolute top-8 inset-x-0 flex flex-col items-center gap-2 px-4 pointer-events-none">
+              <span className={`px-4 py-2 rounded-full text-[14px] font-semibold text-white backdrop-blur-sm transition-colors duration-300 ${gerade ? "bg-ok/85" : "bg-black/55"}`}>
+                {gerade ? "✓ Perfekt ausgerichtet — jetzt auslösen" : neigung ? "Handy gerade halten — Linie waagerecht" : "Steh ca. 2–3 m entfernt, Wand frontal einrahmen"}
+              </span>
             </div>
-            {neigung && (
-              <div className="absolute bottom-24 inset-x-0 flex justify-center pointer-events-none">
-                <span className={`glas transition-colors ${gerade ? "!bg-ok/80" : ""}`}>
-                  {gerade ? "✓ Gerade — jetzt auslösen" : "Linie waagerecht ausrichten"}
-                </span>
-              </div>
-            )}
 
-            {/* Auslöser-Zeile */}
-            <div className="absolute bottom-4 inset-x-0 flex items-center justify-center gap-6">
-              <button onClick={ausloesen} aria-label="Foto aufnehmen" className="ausloeser"><span /></button>
-              <label className="glas cursor-pointer absolute right-4">
+            {/* Auslöser groß + Galerie */}
+            <div className="absolute bottom-7 inset-x-0 flex items-center justify-center">
+              <button onClick={ausloesen} aria-label="Foto aufnehmen"
+                className={`ausloeser ${gerade ? "!border-[var(--ok)]" : ""}`}><span /></button>
+              <label className="glas cursor-pointer absolute right-5 bottom-4">
                 Galerie
                 <input type="file" accept="image/*" className="hidden" onChange={fotoLaden} />
               </label>
