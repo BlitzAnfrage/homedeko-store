@@ -84,10 +84,20 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
         <span className="text-ink">{p.name}</span>
       </nav>
 
-      <div className="grid lg:grid-cols-[7fr_5fr] gap-8 lg:gap-12 items-start">
-        {/* Linke Spalte: Galerie → AR-Banner → Motiv → auch als → Material → Raum → (Preistabelle eingeklappt) */}
-        <div className="space-y-8 min-w-0">
+      {/* Auf Mobil: Galerie → Titel+Kaufbox → dann Wissens-Content.
+          Auf Desktop: klassisches 2-Spalten-Grid (Content links, Kaufbox rechts). */}
+      <div className="flex flex-col lg:grid lg:grid-cols-[7fr_5fr] gap-8 lg:gap-12 items-start">
+        {/* Galerie — auf Mobil zuerst, auf Desktop oben in der linken Spalte */}
+        <div className="order-1 lg:hidden w-full">
           <Gallery bilder={p.bilder} alt={p.name} arProdukt={p} />
+        </div>
+
+        {/* Linke Content-Spalte */}
+        <div className="order-3 lg:order-none space-y-8 min-w-0 w-full">
+          {/* Galerie auf Desktop hier (auf Mobil oben ausgelagert) */}
+          <div className="hidden lg:block">
+            <Gallery bilder={p.bilder} alt={p.name} arProdukt={p} />
+          </div>
 
           {/* AR-Banner — Haupt-Trigger direkt unter der Galerie */}
           <PdpArBanner p={p} />
@@ -171,8 +181,8 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
           </details>
         </div>
 
-        {/* Kaufspalte */}
-        <div className="space-y-4">
+        {/* Kaufspalte — auf Mobil direkt nach der Galerie (order-2), auf Desktop rechts */}
+        <div className="order-2 lg:order-none space-y-4 w-full">
           <div>
             <div className="flex flex-wrap gap-2 mb-2.5">
               {kats.map((k) => {
@@ -198,7 +208,7 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
         <section className="mt-16">
           <div className="eyebrow mb-2">In echten Räumen</div>
           <h2 className="font-display text-2xl lg:text-3xl text-ink-strong mb-6">„{p.motiv.name}" bei dir zuhause</h2>
-          <div className={`grid gap-4 ${wohnbilder.length >= 3 ? "sm:grid-cols-2 lg:grid-cols-" + Math.min(wohnbilder.length, 4) : "sm:grid-cols-" + wohnbilder.length}`}>
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {wohnbilder.map((b) => (
               <div key={b.key} className="card overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

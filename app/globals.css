@@ -197,11 +197,17 @@ body {
 }
 .galerie-dunkel .eyebrow { color: var(--gold-bright); }
 
-/* Scroll-Reveal (JS setzt .is-in via IntersectionObserver) */
-[data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
-[data-reveal].is-in { opacity: 1; transform: none; }
+/* Scroll-Reveal — FAIL-SAFE: Inhalt ist IMMER sichtbar. Die Animation greift nur,
+   wenn das JS (Reveal.tsx) die Klasse .reveal-an auf <html> gesetzt hat UND der
+   Observer läuft. Feuert das JS nicht (z. B. iOS-Hydration-Verzögerung), bleibt
+   einfach alles sichtbar statt zu verschwinden. Kein Layout hängt je an JS. */
+html.reveal-an [data-reveal]:not(.is-in) {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+html.reveal-an [data-reveal].is-in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal] { opacity: 1; transform: none; transition: none; }
+  html.reveal-an [data-reveal] { opacity: 1; transform: none; transition: none; }
 }
 
 /* Karten-Lift beim Hover (warmer, weicher Schatten — bewusst dezent) */

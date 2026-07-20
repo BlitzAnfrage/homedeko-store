@@ -71,7 +71,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 py-5 text-center text-[12.5px] text-white/50">
-        © {new Date().getFullYear()} Homedeko Store · Alle Preise inkl. MwSt.
+        © 2026 Homedeko Store · Alle Preise inkl. MwSt.
       </div>
     </footer>
   );

@@ -12,12 +12,20 @@
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "iOS >= 15",
+    "Safari >= 15",
+    "not dead"
+  ],
   "devDependencies": {
     "@netlify/plugin-nextjs": "^5.15.12",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "playwright": "^1.61.1",
     "puppeteer-core": "^24",
     "sharp": "^0.34",
     "tailwindcss": "^4",
