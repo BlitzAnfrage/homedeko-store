@@ -97,11 +97,13 @@ export default function Gallery({ bilder, alt, arProdukt }: { bilder: Ansicht[];
           </button>
         )}
 
-        {/* Punkte — Mobil, spiegeln die Swipe-Position und springen bei Tap */}
-        <div className="sm:hidden flex justify-center gap-1.5 mt-3">
+        {/* Punkte — Mobil, spiegeln die Swipe-Position; große Tap-Fläche (44px), kleiner Punkt */}
+        <div className="sm:hidden flex justify-center mt-1">
           {bilder.map((b, i) => (
             <button key={b.key} onClick={() => zuBild(i)} aria-label={`Bild ${i + 1}`}
-              className={`h-2 rounded-full transition-all ${i === idx ? "w-5 bg-bordeaux" : "w-2 bg-line"}`} />
+              className="h-11 w-6 flex items-center justify-center">
+              <span className={`h-2 rounded-full transition-all ${i === idx ? "w-5 bg-bordeaux" : "w-2 bg-line"}`} />
+            </button>
           ))}
         </div>
       </div>

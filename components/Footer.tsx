@@ -33,30 +33,30 @@ export default function Footer() {
         </div>
         <div>
           <div className="text-gold-bright font-semibold text-[14px] mb-3">Sortiment</div>
-          <ul className="space-y-2 text-[13.5px]">
-            <li><Link className="hover:text-white" href="/kategorie/leinwandbilder">Leinwandbilder</Link></li>
-            <li><Link className="hover:text-white" href="/kategorie/3er-sets">3er-Sets</Link></li>
-            <li><Link className="hover:text-white" href="/kategorie/fototapeten">Fototapeten</Link></li>
-            <li><Link className="hover:text-white" href="/kategorie/wallprints">Wallprints (selbstklebend)</Link></li>
-            <li><Link className="hover:text-white" href="/motive">Alle Motive</Link></li>
+          <ul className="space-y-1 text-[13.5px]">
+            <li><Link className="hover:text-white inline-block py-1.5" href="/kategorie/leinwandbilder">Leinwandbilder</Link></li>
+            <li><Link className="hover:text-white inline-block py-1.5" href="/kategorie/3er-sets">3er-Sets</Link></li>
+            <li><Link className="hover:text-white inline-block py-1.5" href="/kategorie/fototapeten">Fototapeten</Link></li>
+            <li><Link className="hover:text-white inline-block py-1.5" href="/kategorie/wallprints">Wallprints (selbstklebend)</Link></li>
+            <li><Link className="hover:text-white inline-block py-1.5" href="/motive">Alle Motive</Link></li>
           </ul>
         </div>
         <div>
           <div className="text-gold-bright font-semibold text-[14px] mb-3">Motiv-Welten</div>
-          <ul className="space-y-2 text-[13.5px]">
+          <ul className="space-y-1 text-[13.5px]">
             {KATEGORIEN.map((k) => (
-              <li key={k.slug}><Link className="hover:text-white" href={`/kategorie/${k.slug}`}>{k.name}</Link></li>
+              <li key={k.slug}><Link className="hover:text-white inline-block py-1.5" href={`/kategorie/${k.slug}`}>{k.name}</Link></li>
             ))}
           </ul>
         </div>
         <div>
           <div className="text-gold-bright font-semibold text-[14px] mb-3">Service & Rechtliches</div>
-          <ul className="space-y-2 text-[13.5px]">
-            <li><Link className="hover:text-white" href="/versand">Versand & Lieferung</Link></li>
-            <li><Link className="hover:text-white" href="/widerruf">Widerrufsrecht</Link></li>
-            <li><Link className="hover:text-white" href="/agb">AGB</Link></li>
-            <li><Link className="hover:text-white" href="/datenschutz">Datenschutz</Link></li>
-            <li><Link className="hover:text-white" href="/impressum">Impressum</Link></li>
+          <ul className="space-y-1 text-[13.5px]">
+            <li><Link className="hover:text-white inline-block py-1.5" href="/versand">Versand & Lieferung</Link></li>
+            <li><Link className="hover:text-white inline-block py-1.5" href="/widerruf">Widerrufsrecht</Link></li>
+            <li><Link className="hover:text-white inline-block py-1.5" href="/agb">AGB</Link></li>
+            <li><Link className="hover:text-white inline-block py-1.5" href="/datenschutz">Datenschutz</Link></li>
+            <li><Link className="hover:text-white inline-block py-1.5" href="/impressum">Impressum</Link></li>
           </ul>
           <p className="mt-5 text-[12.5px] text-white/55">
             Versandkostenfrei ab 60 € (Deutschland) — darunter pauschal 8 €.

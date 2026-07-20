@@ -35,13 +35,13 @@ export default function WarenkorbSeite() {
                   <div className="text-[13px] text-muted mt-0.5">{item.variante}</div>
                   <div className="mt-3 flex items-center justify-between gap-3 flex-wrap">
                     <div className="flex items-center border border-line rounded-[4px]">
-                      <button className="px-2.5 py-1.5 text-muted hover:text-ink" aria-label="Menge verringern" onClick={() => cart.setMenge(i, item.menge - 1)}><IconMinus size={15} /></button>
+                      <button className="h-11 w-11 flex items-center justify-center text-muted hover:text-ink" aria-label="Menge verringern" onClick={() => cart.setMenge(i, item.menge - 1)}><IconMinus size={16} /></button>
                       <span className="w-7 text-center text-[14px] font-semibold">{item.menge}</span>
-                      <button className="px-2.5 py-1.5 text-muted hover:text-ink" aria-label="Menge erhöhen" onClick={() => cart.setMenge(i, item.menge + 1)}><IconPlus size={15} /></button>
+                      <button className="h-11 w-11 flex items-center justify-center text-muted hover:text-ink" aria-label="Menge erhöhen" onClick={() => cart.setMenge(i, item.menge + 1)}><IconPlus size={16} /></button>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
                       <span className="font-bold text-[16px]">{euro(item.preis * item.menge)}</span>
-                      <button className="text-muted hover:text-ink" aria-label="Entfernen" onClick={() => cart.remove(i)}><IconTrash size={18} /></button>
+                      <button className="h-11 w-11 flex items-center justify-center text-muted hover:text-ink" aria-label="Entfernen" onClick={() => cart.remove(i)}><IconTrash size={19} /></button>
                     </div>
                   </div>
                 </div>

@@ -66,6 +66,17 @@
 
 * { -webkit-tap-highlight-color: transparent; }
 
+/* Touch-Press-Feedback: auf Geräten ohne Hover (Handy/Tablet) bekommen ALLE
+   interaktiven Elemente ein spürbares Antipp-Feedback — sonst wirken sie „tot". */
+@media (hover: none) {
+  a:active, button:active, .card:active, .chip:active, .opt:active,
+  summary:active, [role="button"]:active, label:active {
+    transform: scale(.975);
+    opacity: .85;
+    transition: transform .08s ease, opacity .08s ease;
+  }
+}
+
 body {
   background: var(--bg);
   color: var(--ink);
@@ -150,6 +161,17 @@ body {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 .scroll-x { scrollbar-width: thin; }
+
+/* Produktkarte: auf Touch-Geräten blendet das Wohnbeispiel-Foto langsam
+   automatisch ein/aus (auf Desktop macht das der Hover). */
+@media (hover: none) {
+  .karte-wb { animation: karteWb 7s ease-in-out infinite; }
+}
+@keyframes karteWb {
+  0%, 42% { opacity: 0; }
+  55%, 88% { opacity: 1; }
+  100% { opacity: 0; }
+}
 
 .zoomwrap { overflow: hidden; }
 .zoomwrap img { transition: transform .5s ease; }

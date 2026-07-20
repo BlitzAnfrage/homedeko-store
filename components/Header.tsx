@@ -29,10 +29,16 @@ export default function Header() {
     return () => clearInterval(t);
   }, []);
 
-  // Hintergrund-Scroll sperren, solange das Mobile-Menü offen ist
+  // Hintergrund-Scroll sperren (iOS-fest via position:fixed, Scroll-Position merken)
   useEffect(() => {
-    document.body.style.overflow = mobil ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (!mobil) return;
+    const y = window.scrollY;
+    const s = document.body.style;
+    s.position = "fixed"; s.top = `-${y}px`; s.left = "0"; s.right = "0"; s.overflow = "hidden";
+    return () => {
+      s.position = ""; s.top = ""; s.left = ""; s.right = ""; s.overflow = "";
+      window.scrollTo(0, y);
+    };
   }, [mobil]);
 
   const suchen = (e: React.FormEvent) => {
@@ -81,6 +87,11 @@ export default function Header() {
           </form>
 
           <div className="flex-1 md:hidden" />
+
+          {/* Such-Lupe nur Mobil — öffnet das Menü mit Suchfeld */}
+          <button className="md:hidden p-2 hover:text-accent-ink" aria-label="Suchen" onClick={() => setMobil(true)}>
+            <IconSearch size={23} />
+          </button>
 
           <Link href="/warenkorb" className="relative flex items-center gap-2 p-2 hover:text-accent-ink" aria-label="Warenkorb">
             <IconCart size={24} />
@@ -147,6 +158,7 @@ export default function Header() {
             <form onSubmit={suchen} className="p-4 border-b border-line relative">
               <input
                 value={q} onChange={(e) => setQ(e.target.value)} placeholder="Motiv suchen …"
+                type="search" enterKeyHint="search" autoComplete="off" autoCapitalize="off"
                 className="w-full border border-line rounded-[4px] bg-bg px-4 py-2.5 text-[14px] outline-none focus:border-accent"
               />
               <button className="absolute right-6 top-1/2 -translate-y-1/2 text-muted" aria-label="Suchen"><IconSearch size={18} /></button>

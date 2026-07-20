@@ -56,14 +56,14 @@ export default function KasseSeite() {
             <input name="vorname" required placeholder="Vorname *" className={FELD} autoComplete="given-name" />
             <input name="nachname" required placeholder="Nachname *" className={FELD} autoComplete="family-name" />
           </div>
-          <input name="email" type="email" required placeholder="E-Mail-Adresse *" className={FELD} autoComplete="email" />
-          <input name="telefon" placeholder="Telefon (optional, für Rückfragen)" className={FELD} autoComplete="tel" />
+          <input name="email" type="email" required placeholder="E-Mail-Adresse *" className={FELD} autoComplete="email" inputMode="email" autoCapitalize="off" enterKeyHint="next" />
+          <input name="telefon" type="tel" inputMode="tel" placeholder="Telefon (optional, für Rückfragen)" className={FELD} autoComplete="tel" />
           <div className="grid grid-cols-[2fr_1fr] gap-3">
             <input name="strasse" required placeholder="Straße *" className={FELD} autoComplete="address-line1" />
-            <input name="hausnummer" required placeholder="Nr. *" className={FELD} />
+            <input name="hausnummer" required placeholder="Nr. *" className={FELD} autoComplete="address-line2" />
           </div>
           <div className="grid grid-cols-[1fr_2fr] gap-3">
-            <input name="plz" required placeholder="PLZ *" className={FELD} autoComplete="postal-code" pattern="[0-9]{5}" />
+            <input name="plz" required placeholder="PLZ *" className={FELD} autoComplete="postal-code" inputMode="numeric" pattern="[0-9]{5}" enterKeyHint="next" />
             <input name="ort" required placeholder="Ort *" className={FELD} autoComplete="address-level2" />
           </div>
           <textarea name="anmerkung" placeholder="Anmerkung zur Bestellung (optional)" rows={3} className={FELD} />
