@@ -64,19 +64,18 @@ export default function HeroSlider({ slides, onAr }: { slides: Slide[]; onAr?: (
           </div>
         </div>
         {/* Text darunter */}
-        <div className="px-4 py-8 text-center">
+        <div className="px-5 pt-7 pb-9">
           <div className="eyebrow">{s.stimmung}</div>
-          <h1 className="font-display text-[34px] leading-[1.08] text-ink-strong mt-2">
-            {s.zeile1} <span className="display-italic text-bordeaux">{s.akzent}</span>
-            {s.zeile2 && <> {s.zeile2}</>}
+          <h1 className="font-display text-[38px] leading-[1.1] text-ink-strong mt-2.5">
+            {s.zeile1} <span className="display-italic text-bordeaux">{s.akzent}</span>{s.zeile2 && <> {s.zeile2}</>}
           </h1>
-          <p className="mt-3 text-[15px] text-muted leading-relaxed">{s.sub}</p>
-          <div className="mt-6 flex flex-col gap-2.5">
-            <Link href={s.ctaHref} className="btn-gold py-3.5 text-[15px]">{s.cta}</Link>
-            <button onClick={onAr} className="btn-ar py-3.5 text-[15px] flex items-center justify-center gap-2.5">
+          <p className="mt-4 text-[15.5px] text-muted leading-relaxed">{s.sub}</p>
+          <div className="mt-7 flex flex-col gap-3">
+            <Link href={s.ctaHref} className="btn-gold py-4 text-[15.5px] text-center">{s.cta}</Link>
+            <button onClick={onAr} className="btn-ar py-4 text-[15.5px] flex items-center justify-center gap-2.5">
               <IconCamera size={19} /> Erst an deiner Wand sehen
             </button>
-            <Link href="/motive" className="mt-1 inline-flex items-center justify-center gap-1.5 text-[14px] font-semibold text-gold-ink">
+            <Link href="/motive" className="mt-1 inline-flex items-center gap-1.5 text-[14px] font-semibold text-gold-ink">
               Alle 24 Motive ansehen <IconArrowRight size={15} />
             </Link>
           </div>

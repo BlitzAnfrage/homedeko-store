@@ -29,6 +29,12 @@ export default function Header() {
     return () => clearInterval(t);
   }, []);
 
+  // Hintergrund-Scroll sperren, solange das Mobile-Menü offen ist
+  useEffect(() => {
+    document.body.style.overflow = mobil ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobil]);
+
   const suchen = (e: React.FormEvent) => {
     e.preventDefault();
     if (q.trim()) { router.push(`/suche?q=${encodeURIComponent(q.trim())}`); setMobil(false); }
@@ -39,15 +45,15 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40">
-      {/* Aktionsleiste — Bordeaux-Verlauf, rotierende echte Vorteile, Gold-Link */}
-      <div className="bar-aktion text-[13px] py-2 px-4">
-        <div className="mx-auto max-w-7xl flex items-center justify-center gap-4">
-          <span key={vorteil} className="fade-in inline-flex items-center gap-2 tracking-wide">
-            <span className="text-gold-bright"><IconCheck size={15} /></span>
+      {/* Aktionsleiste — feste Höhe, rotierende echte Vorteile (kein Umbruch-Wackeln) */}
+      <div className="bar-aktion text-[12px] sm:text-[13px] h-9 flex items-center px-4 overflow-hidden">
+        <div className="mx-auto max-w-7xl w-full flex items-center justify-center gap-4">
+          <span key={vorteil} className="fade-in inline-flex items-center gap-1.5 tracking-wide whitespace-nowrap truncate">
+            <span className="text-gold-bright shrink-0"><IconCheck size={14} /></span>
             {VORTEILE[vorteil]}
           </span>
-          <span className="hidden sm:inline text-white/30">|</span>
-          <Link href="/#bestseller" className="hidden sm:inline hover:underline whitespace-nowrap">
+          <span className="hidden lg:inline text-white/30">|</span>
+          <Link href="/#bestseller" className="hidden lg:inline hover:underline whitespace-nowrap">
             Zu den Lieblingsmotiven →
           </Link>
         </div>
@@ -132,11 +138,12 @@ export default function Header() {
       {mobil && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobil(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-[86%] max-w-sm bg-surface overflow-y-auto fade-in">
-            <div className="flex items-center justify-between p-4 border-b border-line">
+          <div className="absolute left-0 top-0 bottom-0 w-[86%] max-w-sm bg-surface flex flex-col fade-in">
+            <div className="flex items-center justify-between p-4 border-b border-line shrink-0">
               <Image src="/logo.png" alt="Homedeko Store" width={150} height={40} className="h-9 w-auto" />
               <button onClick={() => setMobil(false)} aria-label="Menü schließen" className="p-2"><IconClose size={22} /></button>
             </div>
+            <div className="flex-1 overflow-y-auto overscroll-contain pb-8">
             <form onSubmit={suchen} className="p-4 border-b border-line relative">
               <input
                 value={q} onChange={(e) => setQ(e.target.value)} placeholder="Motiv suchen …"
@@ -153,6 +160,7 @@ export default function Header() {
                 <Link key={k.slug} href={`/kategorie/${k.slug}`} onClick={() => setMobil(false)} className="block px-3 py-2.5 text-[14.5px] border-b border-line last:border-0">{k.name}</Link>
               ))}
               <Link href="/motive" onClick={() => setMobil(false)} className="block px-3 py-3 text-[15px] font-medium">Alle Motive</Link>
+            </div>
             </div>
           </div>
         </div>

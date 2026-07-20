@@ -255,17 +255,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 10 · Panorama Fototapeten (Text in heller Glas-Karte) ── */}
+      {/* ── 10 · Panorama Fototapeten ── */}
       {panoTuer && (
-        <section className="mt-16 relative" data-reveal>
-          <div className="relative h-[360px] lg:h-[440px] overflow-hidden">
+        <section className="mt-10 lg:mt-16" data-reveal>
+          {/* Mobil: Bild oben, Text darunter (kein Overlay, damit das Bild sichtbar bleibt) */}
+          <div className="lg:hidden">
+            <div className="relative h-[220px] overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={panoTuer.big} alt="Fototapete Fernöstlicher Tempel im Wohnraum" className="w-full h-full object-cover" />
+            </div>
+            <div className="bg-bordeaux-soft px-4 py-8 text-center">
+              <div className="text-[11px] tracking-[0.22em] uppercase font-semibold text-gold-ink mb-2">Ganze Wände, ein Motiv</div>
+              <h2 className="font-display text-[28px] leading-tight text-ink-strong">
+                Fototapeten bis <span className="display-italic text-bordeaux">390 cm</span> Breite
+              </h2>
+              <p className="mt-3 text-[14.5px] text-muted leading-relaxed">
+                Reißfestes ERFURT-Digitalvlies, exzellentes Nahtverhalten — oder als
+                selbstklebender Wallprint ganz ohne Kleister. Ab 69 €.
+              </p>
+              <div className="mt-5 flex flex-col gap-2.5">
+                <Link href="/kategorie/fototapeten" className="btn-gold py-3 text-[14.5px]">Fototapeten</Link>
+                <Link href="/kategorie/wallprints" className="btn-ghost py-3 text-[14.5px]">Wallprints</Link>
+              </div>
+            </div>
+          </div>
+          {/* Desktop: Text als Glas-Karte über dem Bild */}
+          <div className="hidden lg:block relative h-[440px] overflow-hidden">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={panoTuer.big} alt="Fototapete Fernöstlicher Tempel im Wohnraum" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/25 to-transparent" />
             <div className="relative mx-auto max-w-7xl px-4 h-full flex flex-col justify-center">
-              <div className="max-w-md bg-white/92 backdrop-blur rounded-[10px] p-6 lg:p-8" style={{ boxShadow: "0 30px 70px -34px rgba(94,26,42,.3)" }}>
+              <div className="max-w-md bg-white/92 backdrop-blur rounded-[10px] p-8" style={{ boxShadow: "0 30px 70px -34px rgba(94,26,42,.3)" }}>
                 <div className="text-[11px] tracking-[0.22em] uppercase font-semibold text-gold-ink mb-3">Ganze Wände, ein Motiv</div>
-                <h2 className="font-display text-3xl lg:text-4xl leading-tight text-ink-strong">
+                <h2 className="font-display text-4xl leading-tight text-ink-strong">
                   Fototapeten bis <span className="display-italic text-bordeaux">390 cm</span> Breite
                 </h2>
                 <p className="mt-3 text-[14.5px] text-muted leading-relaxed">

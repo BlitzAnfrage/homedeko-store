@@ -110,29 +110,6 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
             )}
           </section>
 
-          {/* „gibt es auch als" — visuelle Format-Cards */}
-          {andereArten.length > 0 && (
-            <section>
-              <div className="eyebrow mb-2">Ein Motiv, viele Möglichkeiten</div>
-              <h2 className="font-display text-2xl text-ink-strong mb-4">„{p.motiv.name}“ gibt es auch als</h2>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                {andereArten.map((a) => (
-                  <Link key={a.id} href={`/produkt/${a.id}`} className="card lift group overflow-hidden">
-                    <span className="zoomwrap block aspect-square overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={a.bilder[0]?.klein} alt={PRODUKTARTEN[a.art].name} loading="lazy" className="w-full h-full object-cover" />
-                    </span>
-                    <span className="block p-3">
-                      <span className="block font-semibold text-[14px] group-hover:text-gold-ink">{PRODUKTARTEN[a.art].name}</span>
-                      <span className="block text-[11.5px] text-muted leading-snug mt-0.5">{NUTZEN[a.art] ?? ""}</span>
-                      <span className="block text-[13.5px] font-semibold text-gold-ink mt-1.5">ab {euro(a.ab)}</span>
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
           <section>
             <h2 className="font-display text-2xl text-ink-strong mb-4">Material & Verarbeitung</h2>
             <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5">
@@ -179,6 +156,29 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
               <p className="text-[12.5px] text-muted px-4 py-3">★ beliebteste Größe · Alle Preise inkl. MwSt. · Versandkostenfrei ab 60 € (DE), darunter 8 €.</p>
             </div>
           </details>
+
+          {/* „gibt es auch als" — visuelle Format-Cards, ganz unten */}
+          {andereArten.length > 0 && (
+            <section>
+              <div className="eyebrow mb-2">Ein Motiv, viele Möglichkeiten</div>
+              <h2 className="font-display text-2xl text-ink-strong mb-4">„{p.motiv.name}“ gibt es auch als</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                {andereArten.map((a) => (
+                  <Link key={a.id} href={`/produkt/${a.id}`} className="card lift group overflow-hidden">
+                    <span className="zoomwrap block aspect-square overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={a.bilder[0]?.klein} alt={PRODUKTARTEN[a.art].name} loading="lazy" className="w-full h-full object-cover" />
+                    </span>
+                    <span className="block p-3">
+                      <span className="block font-semibold text-[14px] group-hover:text-gold-ink">{PRODUKTARTEN[a.art].name}</span>
+                      <span className="block text-[11.5px] text-muted leading-snug mt-0.5">{NUTZEN[a.art] ?? ""}</span>
+                      <span className="block text-[13.5px] font-semibold text-gold-ink mt-1.5">ab {euro(a.ab)}</span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         {/* Kaufspalte — auf Mobil direkt nach der Galerie (order-2), auf Desktop rechts */}
@@ -208,7 +208,7 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
         <section className="mt-16">
           <div className="eyebrow mb-2">In echten Räumen</div>
           <h2 className="font-display text-2xl lg:text-3xl text-ink-strong mb-6">„{p.motiv.name}" bei dir zuhause</h2>
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
             {wohnbilder.map((b) => (
               <div key={b.key} className="card overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}

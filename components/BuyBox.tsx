@@ -135,12 +135,12 @@ export default function BuyBox({ p }: { p: Produkt }) {
                         style={{ width: (g.b ?? 50) * s, height: (g.h ?? 50) * s }} />
                     ))}
                   </span>
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-[13px] font-semibold leading-tight">{g.label}</span>
-                      {g.beliebt && <span className="text-[9.5px] font-bold uppercase tracking-wide bg-gold text-white rounded-[3px] px-1 py-0.5">Beliebt</span>}
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[13px] font-semibold leading-tight whitespace-nowrap">{g.label}</span>
+                    <span className="flex items-center gap-1.5 mt-0.5">
+                      <span className="text-[12.5px] text-muted">{euro(g.preis)}</span>
+                      {g.beliebt && <span className="text-[9px] font-bold uppercase tracking-wide bg-gold text-white rounded-[3px] px-1 py-0.5">Top</span>}
                     </span>
-                    <span className="block text-[12.5px] text-muted mt-0.5">{euro(g.preis)}</span>
                   </span>
                 </span>
               </button>

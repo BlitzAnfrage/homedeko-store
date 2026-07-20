@@ -35,10 +35,10 @@ export default function ProductCard({ p, prio }: { p: Produkt; prio?: boolean })
         )}
       </span>
       <span className="flex flex-col gap-1 p-3.5">
-        <span className="flex items-center justify-between gap-2">
-          <span className="text-[11.5px] uppercase tracking-[0.14em] text-muted">{PRODUKTARTEN[p.art].name}</span>
+        <span className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-2 min-w-0">
+          <span className="text-[11px] uppercase tracking-[0.12em] text-muted truncate">{PRODUKTARTEN[p.art].name}</span>
           {welt && farbe && (
-            <span className="chip" style={{ color: farbe.fg, background: farbe.bg }}>{welt.name.split(" & ")[0]}</span>
+            <span className="chip self-start shrink-0 whitespace-nowrap" style={{ color: farbe.fg, background: farbe.bg }}>{welt.name.split(" & ")[0]}</span>
           )}
         </span>
         <span className="text-[15px] font-semibold leading-snug group-hover:text-gold-ink">{p.motiv.name}</span>
