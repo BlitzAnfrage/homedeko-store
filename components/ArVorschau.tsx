@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { euro, Groesse } from "@/lib/preise";
 import type { Produkt } from "@/lib/katalog";
-import { IconCamera, IconCart, IconCheck, IconClose, IconMove, IconPerson, IconFrame } from "./Icon";
+import { IconCamera, IconCart, IconCheck, IconClose, IconMove } from "./Icon";
 
 type Phase = "lade" | "sucher" | "upload" | "platzieren";
 
@@ -23,7 +23,7 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
   const [foto, setFoto] = useState<string | null>(null);
   const [gIdx, setGIdx] = useState(() => Math.max(0, p.groessen.findIndex((g) => g.beliebt)));
   const [pos, setPos] = useState({ x: 50, y: 42 });
-  const [wandCm, setWandCm] = useState(350);
+  const wandCm = 350; // angenommene sichtbare Wandbreite bei üblichem Foto-Abstand
   const [hinweisAus, setHinweisAus] = useState(false);
   const [funken, setFunken] = useState<{ dx: number; dy: number; l: number; t: number }[]>([]);
   const [gespeichert, setGespeichert] = useState(false);
@@ -229,10 +229,9 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
               </div>
             )}
 
-            {/* Dezente Hinweise im Bild — verschwinden von selbst */}
-            <div className={`absolute top-3 inset-x-0 flex flex-wrap justify-center gap-2 px-3 transition-opacity duration-700 ${hinweisAus ? "opacity-0" : "opacity-100"}`}>
-              <span className="glas"><IconPerson size={15} /> 2–3 m Abstand zur Wand</span>
-              <span className="glas"><IconFrame size={15} /> Handy gerade & frontal</span>
+            {/* Ein dezenter Hinweis im Bild — verschwindet von selbst */}
+            <div className={`absolute top-3 inset-x-0 flex justify-center px-3 transition-opacity duration-700 ${hinweisAus ? "opacity-0" : "opacity-100"}`}>
+              <span className="glas">Wand frontal einrahmen — dann auslösen</span>
             </div>
             {neigung && (
               <div className="absolute bottom-24 inset-x-0 flex justify-center pointer-events-none">
@@ -253,23 +252,30 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
           </div>
         )}
 
-        {/* ── Upload-Fallback (Desktop / keine Kamera) ── */}
+        {/* ── Upload-Screen (Desktop / keine Kamera) — clean & premium ── */}
         {phase === "upload" && (
-          <div className="p-8 sm:p-12 text-center fade-in">
-            <h3 className="font-display text-2xl sm:text-[28px] text-ink-strong">Zeig uns deine Wand</h3>
-            <p className="text-[14px] text-muted mt-2 max-w-md mx-auto leading-relaxed">
-              Nimm mit dem Handy ein Foto auf oder lade eines hoch — danach legst du
-              „{p.motiv.name}“ maßstabsgetreu darauf.
-            </p>
-            <div className="mt-5 flex flex-wrap justify-center gap-x-7 gap-y-2 text-[13px] text-muted">
-              <span className="inline-flex items-center gap-2"><IconPerson size={16} className="text-gold-ink" /> 2–3 m Abstand</span>
-              <span className="inline-flex items-center gap-2"><IconFrame size={16} className="text-gold-ink" /> Gerade & frontal fotografieren</span>
+          <div className="fade-in">
+            {/* stimmungsvolles Vorschaubild als Blickfang */}
+            <div className="relative h-[220px] sm:h-[260px] overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={motiv} alt="" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+              <div className="absolute left-5 bottom-5 right-5 text-white">
+                <div className="text-[11px] tracking-[0.2em] uppercase font-semibold text-gold-bright mb-1.5">Live an deiner Wand</div>
+                <h3 className="font-display text-[26px] sm:text-3xl leading-[1.15]">So sieht „{p.motiv.name}“ bei dir aus</h3>
+              </div>
             </div>
-            <label className="btn-gold px-8 py-4 text-[15.5px] cursor-pointer inline-flex items-center gap-2.5 mt-7">
-              <IconCamera size={20} /> Foto aufnehmen / hochladen
-              <input type="file" accept="image/*" capture="environment" className="hidden" onChange={fotoLaden} />
-            </label>
-            <p className="mt-5 text-[11.5px] text-muted">Dein Foto bleibt auf deinem Gerät — es wird nichts hochgeladen.</p>
+            <div className="p-6 sm:p-8 text-center">
+              <p className="text-[14.5px] text-muted max-w-md mx-auto leading-relaxed">
+                Lade ein Foto deiner Wand hoch — das Motiv wird maßstabsgetreu daraufgelegt,
+                in deiner gewählten Größe.
+              </p>
+              <label className="btn-gold px-8 py-4 text-[15.5px] cursor-pointer inline-flex items-center gap-2.5 mt-6">
+                <IconCamera size={20} /> Foto aufnehmen oder hochladen
+                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={fotoLaden} />
+              </label>
+              <p className="mt-5 text-[11.5px] text-muted">Dein Foto bleibt auf deinem Gerät — es wird nichts hochgeladen.</p>
+            </div>
           </div>
         )}
 
@@ -306,24 +312,17 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
 
             <div className="p-4 sm:p-5 space-y-4 relative">
               <div>
-                <div className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-muted mb-2">
-                  Größe antippen — skaliert maßstabsgetreu
-                </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-muted mb-2">Größe wählen</div>
+                <div className="grid grid-cols-2 gap-2">
                   {p.groessen.map((g, i) => (
-                    <button key={g.label} className="opt px-3 py-1.5 text-[12.5px] font-semibold" data-selected={i === gIdx}
+                    <button key={g.label} className="opt relative px-3 py-2 text-left text-[13px] font-semibold" data-selected={i === gIdx}
                       onClick={() => { vibrieren(12); setGIdx(i); }}>
-                      {g.label} · {euro(g.preis)}{g.beliebt ? " ★" : ""}
+                      {g.beliebt && <span className="absolute right-2 top-2 text-[8.5px] font-bold uppercase tracking-wide bg-gold text-white rounded-[3px] px-1 py-0.5">Top</span>}
+                      <span className="block whitespace-nowrap">{g.label}</span>
+                      <span className="block text-muted font-normal text-[12.5px]">{euro(g.preis)}</span>
                     </button>
                   ))}
                 </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-[12px] text-muted mb-1">
-                  <span>Ich stehe näher</span><span>Feinjustierung Abstand</span><span>Ich stehe weiter weg</span>
-                </div>
-                <input type="range" min={220} max={520} step={10} value={wandCm} onChange={(e) => setWandCm(Number(e.target.value))}
-                  className="w-full accent-[#b18435]" aria-label="Abstand feinjustieren" />
               </div>
               <div className="flex flex-col sm:flex-row gap-3 relative">
                 <button onClick={inWarenkorb} className="btn-gold flex-1 py-3.5 text-[15px] flex items-center justify-center gap-2">

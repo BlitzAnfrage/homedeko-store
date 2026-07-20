@@ -37,47 +37,38 @@ export default function HeroSlider({ slides, onAr }: { slides: Slide[]; onAr?: (
 
   return (
     <>
-      {/* ══ MOBIL-HERO (< lg): kompakt, ein Bild, kein absolut-Chaos ══ */}
+      {/* ══ MOBIL-HERO (< lg): eine geschlossene Bildbühne mit Text-Overlay ══ */}
       <section className="hero-buehne lg:hidden">
-        {/* Bild oben: Wohnszene mit schwebendem Motiv, feste saubere Höhe */}
-        <div className="relative h-[300px] overflow-hidden">
+        <div className="relative h-[520px] overflow-hidden">
           {slides.map((sl, i) => (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img key={sl.szene} src={sl.szene} alt=""
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${i === idx ? "opacity-100" : "opacity-0"}`} />
           ))}
-          <Link href={s.href} className="absolute left-4 bottom-4 w-[38%] max-w-[150px]">
-            <span className="block bg-white p-1.5 rounded-[5px]" style={{ boxShadow: "0 16px 30px -12px rgba(0,0,0,.5)" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.motiv} alt={s.motivName} className="w-full aspect-square object-cover rounded-[3px]" />
-            </span>
-            <span className="mt-1.5 inline-block bg-white/95 text-ink-strong text-[11px] font-semibold px-2 py-1 rounded-[4px]">
-              „{s.motivName}“ · <span className="text-bordeaux">ab {euro(s.ab)}</span>
-            </span>
-          </Link>
-          {/* Slide-Punkte */}
-          <div className="absolute bottom-3 right-4 flex gap-1.5">
+          {/* Verlauf für Text-Lesbarkeit */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+
+          {/* Text + CTAs als Overlay unten */}
+          <div key={idx} className="stagger absolute inset-x-0 bottom-0 px-5 pb-7 text-white">
+            <div className="text-[11px] tracking-[0.2em] uppercase font-semibold text-gold-bright">{s.stimmung}</div>
+            <h1 className="font-display text-[34px] leading-[1.1] mt-2">
+              {s.zeile1} <span className="display-italic text-gold-bright">{s.akzent}</span>{s.zeile2 && <> {s.zeile2}</>}
+            </h1>
+            <p className="mt-2.5 text-[14.5px] text-white/85 leading-relaxed">{s.sub}</p>
+            <div className="mt-5 flex flex-col gap-2.5">
+              <Link href={s.ctaHref} className="btn-gold py-3.5 text-[15px] text-center">{s.cta}</Link>
+              <button onClick={onAr} className="bg-white/15 border border-white/40 backdrop-blur-sm text-white rounded-[5px] py-3.5 text-[15px] font-semibold flex items-center justify-center gap-2.5">
+                <IconCamera size={19} /> Erst an deiner Wand sehen
+              </button>
+            </div>
+          </div>
+
+          {/* Slide-Punkte oben */}
+          <div className="absolute top-4 right-4 flex gap-1.5">
             {slides.map((sl, i) => (
               <button key={sl.szene} onClick={() => setIdx(i)} aria-label={`Stimmung ${sl.stimmung}`}
                 className={`h-[5px] rounded-full transition-all ${i === idx ? "w-7 bg-white" : "w-3 bg-white/50"}`} />
             ))}
-          </div>
-        </div>
-        {/* Text darunter */}
-        <div className="px-5 pt-7 pb-9">
-          <div className="eyebrow">{s.stimmung}</div>
-          <h1 className="font-display text-[38px] leading-[1.1] text-ink-strong mt-2.5">
-            {s.zeile1} <span className="display-italic text-bordeaux">{s.akzent}</span>{s.zeile2 && <> {s.zeile2}</>}
-          </h1>
-          <p className="mt-4 text-[15.5px] text-muted leading-relaxed">{s.sub}</p>
-          <div className="mt-7 flex flex-col gap-3">
-            <Link href={s.ctaHref} className="btn-gold py-4 text-[15.5px] text-center">{s.cta}</Link>
-            <button onClick={onAr} className="btn-ar py-4 text-[15.5px] flex items-center justify-center gap-2.5">
-              <IconCamera size={19} /> Erst an deiner Wand sehen
-            </button>
-            <Link href="/motive" className="mt-1 inline-flex items-center gap-1.5 text-[14px] font-semibold text-gold-ink">
-              Alle 24 Motive ansehen <IconArrowRight size={15} />
-            </Link>
           </div>
         </div>
       </section>
