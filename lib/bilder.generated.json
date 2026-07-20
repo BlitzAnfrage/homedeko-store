@@ -1,0 +1,1556 @@
+{
+ "bouton-vintage-zwei": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-zwei/ans.jpg",
+    "klein": "/bilder/bouton-vintage-zwei/ans_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-zwei/ans-dunkel.jpg",
+    "klein": "/bilder/bouton-vintage-zwei/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-zwei/wb.jpg",
+    "klein": "/bilder/bouton-vintage-zwei/wb_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-zwei/wb-2.jpg",
+    "klein": "/bilder/bouton-vintage-zwei/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-zwei/wb-3.jpg",
+    "klein": "/bilder/bouton-vintage-zwei/wb-3_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-zwei/det.jpg",
+    "klein": "/bilder/bouton-vintage-zwei/det_s.jpg"
+   }
+  ]
+ },
+ "bouton-vintage-drei": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-drei/ans.jpg",
+    "klein": "/bilder/bouton-vintage-drei/ans_s.jpg"
+   },
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-drei/ans-hell.jpg",
+    "klein": "/bilder/bouton-vintage-drei/ans-hell_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-drei/wb-1.jpg",
+    "klein": "/bilder/bouton-vintage-drei/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-drei/wb-2.jpg",
+    "klein": "/bilder/bouton-vintage-drei/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-drei/wb-3.jpg",
+    "klein": "/bilder/bouton-vintage-drei/wb-3_s.jpg"
+   }
+  ]
+ },
+ "bunte-kreise": {
+  "views": [
+   {
+    "key": "ans-1",
+    "typ": "ans",
+    "rang": 2,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bunte-kreise/ans-1.jpg",
+    "klein": "/bilder/bunte-kreise/ans-1_s.jpg"
+   },
+   {
+    "key": "ans-2",
+    "typ": "ans",
+    "rang": 3,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bunte-kreise/ans-2.jpg",
+    "klein": "/bilder/bunte-kreise/ans-2_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bunte-kreise/wb-1.jpg",
+    "klein": "/bilder/bunte-kreise/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bunte-kreise/wb-2.jpg",
+    "klein": "/bilder/bunte-kreise/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bunte-kreise/wb-3.jpg",
+    "klein": "/bilder/bunte-kreise/wb-3_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bunte-kreise/det.jpg",
+    "klein": "/bilder/bunte-kreise/det_s.jpg"
+   }
+  ]
+ },
+ "goldtattoo": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/goldtattoo/ans.jpg",
+    "klein": "/bilder/goldtattoo/ans_s.jpg"
+   },
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/goldtattoo/ans-hell.jpg",
+    "klein": "/bilder/goldtattoo/ans-hell_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/goldtattoo/wb-1.jpg",
+    "klein": "/bilder/goldtattoo/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/goldtattoo/wb-2.jpg",
+    "klein": "/bilder/goldtattoo/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/goldtattoo/wb-3.jpg",
+    "klein": "/bilder/goldtattoo/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/goldtattoo/wb-4.jpg",
+    "klein": "/bilder/goldtattoo/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/goldtattoo/det.jpg",
+    "klein": "/bilder/goldtattoo/det_s.jpg"
+   }
+  ]
+ },
+ "gute-zeiten": {
+  "views": [
+   {
+    "key": "ans-1",
+    "typ": "ans",
+    "rang": 2,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/gute-zeiten/ans-1.jpg",
+    "klein": "/bilder/gute-zeiten/ans-1_s.jpg"
+   },
+   {
+    "key": "ans-2",
+    "typ": "ans",
+    "rang": 3,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/gute-zeiten/ans-2.jpg",
+    "klein": "/bilder/gute-zeiten/ans-2_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/gute-zeiten/wb-1.jpg",
+    "klein": "/bilder/gute-zeiten/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/gute-zeiten/wb-2.jpg",
+    "klein": "/bilder/gute-zeiten/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/gute-zeiten/wb-3.jpg",
+    "klein": "/bilder/gute-zeiten/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/gute-zeiten/wb-4.jpg",
+    "klein": "/bilder/gute-zeiten/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/gute-zeiten/det.jpg",
+    "klein": "/bilder/gute-zeiten/det_s.jpg"
+   }
+  ]
+ },
+ "bluetentraum-grunge": {
+  "views": [
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bluetentraum-grunge/ans-hell.jpg",
+    "klein": "/bilder/bluetentraum-grunge/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bluetentraum-grunge/ans-dunkel.jpg",
+    "klein": "/bilder/bluetentraum-grunge/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bluetentraum-grunge/wb.jpg",
+    "klein": "/bilder/bluetentraum-grunge/wb_s.jpg"
+   },
+   {
+    "key": "motiv",
+    "typ": "motiv",
+    "rang": 50,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bluetentraum-grunge/motiv.jpg",
+    "klein": "/bilder/bluetentraum-grunge/motiv_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bluetentraum-grunge/det.jpg",
+    "klein": "/bilder/bluetentraum-grunge/det_s.jpg"
+   }
+  ]
+ },
+ "geometrie-eins": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/geometrie-eins/ans.jpg",
+    "klein": "/bilder/geometrie-eins/ans_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/geometrie-eins/wb.jpg",
+    "klein": "/bilder/geometrie-eins/wb_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/geometrie-eins/wb-2.jpg",
+    "klein": "/bilder/geometrie-eins/wb-2_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/geometrie-eins/det.jpg",
+    "klein": "/bilder/geometrie-eins/det_s.jpg"
+   }
+  ]
+ },
+ "rosette-pink-orange": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-pink-orange/ans.jpg",
+    "klein": "/bilder/rosette-pink-orange/ans_s.jpg"
+   },
+   {
+    "key": "ansx",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-pink-orange/ansx.jpg",
+    "klein": "/bilder/rosette-pink-orange/ansx_s.jpg"
+   },
+   {
+    "key": "ans-2",
+    "typ": "ans",
+    "rang": 3,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-pink-orange/ans-2.jpg",
+    "klein": "/bilder/rosette-pink-orange/ans-2_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-pink-orange/wb-1.jpg",
+    "klein": "/bilder/rosette-pink-orange/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-pink-orange/wb-2.jpg",
+    "klein": "/bilder/rosette-pink-orange/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-pink-orange/wb-3.jpg",
+    "klein": "/bilder/rosette-pink-orange/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-pink-orange/wb-4.jpg",
+    "klein": "/bilder/rosette-pink-orange/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-pink-orange/det.jpg",
+    "klein": "/bilder/rosette-pink-orange/det_s.jpg"
+   }
+  ]
+ },
+ "collage-barocktisch": {
+  "views": [
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/collage-barocktisch/ans-hell.jpg",
+    "klein": "/bilder/collage-barocktisch/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/collage-barocktisch/ans-dunkel.jpg",
+    "klein": "/bilder/collage-barocktisch/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/collage-barocktisch/wb.jpg",
+    "klein": "/bilder/collage-barocktisch/wb_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/collage-barocktisch/wb-1.jpg",
+    "klein": "/bilder/collage-barocktisch/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/collage-barocktisch/wb-3.jpg",
+    "klein": "/bilder/collage-barocktisch/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/collage-barocktisch/wb-4.jpg",
+    "klein": "/bilder/collage-barocktisch/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/collage-barocktisch/det.jpg",
+    "klein": "/bilder/collage-barocktisch/det_s.jpg"
+   }
+  ]
+ },
+ "rosa-rose-struktur": {
+  "views": [
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosa-rose-struktur/ans-hell.jpg",
+    "klein": "/bilder/rosa-rose-struktur/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosa-rose-struktur/ans-dunkel.jpg",
+    "klein": "/bilder/rosa-rose-struktur/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosa-rose-struktur/wb-1.jpg",
+    "klein": "/bilder/rosa-rose-struktur/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosa-rose-struktur/wb-2.jpg",
+    "klein": "/bilder/rosa-rose-struktur/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosa-rose-struktur/wb-3.jpg",
+    "klein": "/bilder/rosa-rose-struktur/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosa-rose-struktur/wb-4.jpg",
+    "klein": "/bilder/rosa-rose-struktur/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosa-rose-struktur/det.jpg",
+    "klein": "/bilder/rosa-rose-struktur/det_s.jpg"
+   }
+  ]
+ },
+ "kreismuster": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/kreismuster/ans.jpg",
+    "klein": "/bilder/kreismuster/ans_s.jpg"
+   },
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/kreismuster/ans-hell.jpg",
+    "klein": "/bilder/kreismuster/ans-hell_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/kreismuster/wb-1.jpg",
+    "klein": "/bilder/kreismuster/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/kreismuster/wb-2.jpg",
+    "klein": "/bilder/kreismuster/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/kreismuster/wb-3.jpg",
+    "klein": "/bilder/kreismuster/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/kreismuster/wb-4.jpg",
+    "klein": "/bilder/kreismuster/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/kreismuster/det.jpg",
+    "klein": "/bilder/kreismuster/det_s.jpg"
+   }
+  ]
+ },
+ "edle-waffe": {
+  "views": [
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/edle-waffe/ans-hell.jpg",
+    "klein": "/bilder/edle-waffe/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/edle-waffe/ans-dunkel.jpg",
+    "klein": "/bilder/edle-waffe/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/edle-waffe/wb-1.jpg",
+    "klein": "/bilder/edle-waffe/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/edle-waffe/wb-2.jpg",
+    "klein": "/bilder/edle-waffe/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/edle-waffe/wb-3.jpg",
+    "klein": "/bilder/edle-waffe/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/edle-waffe/wb-4.jpg",
+    "klein": "/bilder/edle-waffe/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/edle-waffe/det.jpg",
+    "klein": "/bilder/edle-waffe/det_s.jpg"
+   }
+  ]
+ },
+ "rosette-tuerkis": {
+  "views": [
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-tuerkis/ans-hell.jpg",
+    "klein": "/bilder/rosette-tuerkis/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-tuerkis/ans-dunkel.jpg",
+    "klein": "/bilder/rosette-tuerkis/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-tuerkis/wb-1.jpg",
+    "klein": "/bilder/rosette-tuerkis/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-tuerkis/wb-2.jpg",
+    "klein": "/bilder/rosette-tuerkis/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-tuerkis/wb-3.jpg",
+    "klein": "/bilder/rosette-tuerkis/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-tuerkis/wb-4.jpg",
+    "klein": "/bilder/rosette-tuerkis/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-tuerkis/det.jpg",
+    "klein": "/bilder/rosette-tuerkis/det_s.jpg"
+   }
+  ]
+ },
+ "antikes-pistolenpaar": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/antikes-pistolenpaar/ans.jpg",
+    "klein": "/bilder/antikes-pistolenpaar/ans_s.jpg"
+   },
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/antikes-pistolenpaar/ans-hell.jpg",
+    "klein": "/bilder/antikes-pistolenpaar/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/antikes-pistolenpaar/ans-dunkel.jpg",
+    "klein": "/bilder/antikes-pistolenpaar/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/antikes-pistolenpaar/wb.jpg",
+    "klein": "/bilder/antikes-pistolenpaar/wb_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/antikes-pistolenpaar/wb-1.jpg",
+    "klein": "/bilder/antikes-pistolenpaar/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/antikes-pistolenpaar/wb-3.jpg",
+    "klein": "/bilder/antikes-pistolenpaar/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/antikes-pistolenpaar/wb-4.jpg",
+    "klein": "/bilder/antikes-pistolenpaar/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/antikes-pistolenpaar/det.jpg",
+    "klein": "/bilder/antikes-pistolenpaar/det_s.jpg"
+   }
+  ]
+ },
+ "abstrakt-fliessend": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/abstrakt-fliessend/ans.jpg",
+    "klein": "/bilder/abstrakt-fliessend/ans_s.jpg"
+   },
+   {
+    "key": "ansx",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/abstrakt-fliessend/ansx.jpg",
+    "klein": "/bilder/abstrakt-fliessend/ansx_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/abstrakt-fliessend/wb.jpg",
+    "klein": "/bilder/abstrakt-fliessend/wb_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/abstrakt-fliessend/wb-2.jpg",
+    "klein": "/bilder/abstrakt-fliessend/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/abstrakt-fliessend/wb-3.jpg",
+    "klein": "/bilder/abstrakt-fliessend/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/abstrakt-fliessend/wb-4.jpg",
+    "klein": "/bilder/abstrakt-fliessend/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/abstrakt-fliessend/det.jpg",
+    "klein": "/bilder/abstrakt-fliessend/det_s.jpg"
+   }
+  ]
+ },
+ "fernoestlicher-tempel-eins": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/ans.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/ans_s.jpg"
+   },
+   {
+    "key": "ans-2",
+    "typ": "ans",
+    "rang": 3,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/ans-2.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/ans-2_s.jpg"
+   },
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/ans-hell.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/ans-hell_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/wb-1.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/wb-2.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/wb-3.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/wb-4.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/wb-4_s.jpg"
+   },
+   {
+    "key": "wb-5",
+    "typ": "wb",
+    "rang": 25,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/wb-5.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/wb-5_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/fernoestlicher-tempel-eins/det.jpg",
+    "klein": "/bilder/fernoestlicher-tempel-eins/det_s.jpg"
+   }
+  ]
+ },
+ "simple-streifen": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/simple-streifen/ans.jpg",
+    "klein": "/bilder/simple-streifen/ans_s.jpg"
+   },
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/simple-streifen/ans-hell.jpg",
+    "klein": "/bilder/simple-streifen/ans-hell_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/simple-streifen/wb-1.jpg",
+    "klein": "/bilder/simple-streifen/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/simple-streifen/wb-2.jpg",
+    "klein": "/bilder/simple-streifen/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/simple-streifen/wb-3.jpg",
+    "klein": "/bilder/simple-streifen/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/simple-streifen/wb-4.jpg",
+    "klein": "/bilder/simple-streifen/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/simple-streifen/det.jpg",
+    "klein": "/bilder/simple-streifen/det_s.jpg"
+   }
+  ]
+ },
+ "acht-nach-neun": {
+  "views": [
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/acht-nach-neun/ans-hell.jpg",
+    "klein": "/bilder/acht-nach-neun/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/acht-nach-neun/ans-dunkel.jpg",
+    "klein": "/bilder/acht-nach-neun/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/acht-nach-neun/wb.jpg",
+    "klein": "/bilder/acht-nach-neun/wb_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/acht-nach-neun/wb-3.jpg",
+    "klein": "/bilder/acht-nach-neun/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/acht-nach-neun/wb-4.jpg",
+    "klein": "/bilder/acht-nach-neun/wb-4_s.jpg"
+   },
+   {
+    "key": "wb-5",
+    "typ": "wb",
+    "rang": 25,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/acht-nach-neun/wb-5.jpg",
+    "klein": "/bilder/acht-nach-neun/wb-5_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/acht-nach-neun/det.jpg",
+    "klein": "/bilder/acht-nach-neun/det_s.jpg"
+   }
+  ]
+ },
+ "arabische-tueren": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/arabische-tueren/ans.jpg",
+    "klein": "/bilder/arabische-tueren/ans_s.jpg"
+   },
+   {
+    "key": "ans-1",
+    "typ": "ans",
+    "rang": 2,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/arabische-tueren/ans-1.jpg",
+    "klein": "/bilder/arabische-tueren/ans-1_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/arabische-tueren/wb.jpg",
+    "klein": "/bilder/arabische-tueren/wb_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/arabische-tueren/wb-1.jpg",
+    "klein": "/bilder/arabische-tueren/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/arabische-tueren/wb-2.jpg",
+    "klein": "/bilder/arabische-tueren/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/arabische-tueren/wb-3.jpg",
+    "klein": "/bilder/arabische-tueren/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/arabische-tueren/wb-4.jpg",
+    "klein": "/bilder/arabische-tueren/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/arabische-tueren/det.jpg",
+    "klein": "/bilder/arabische-tueren/det_s.jpg"
+   }
+  ]
+ },
+ "rosette-fresko": {
+  "views": [
+   {
+    "key": "ans-1",
+    "typ": "ans",
+    "rang": 2,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-fresko/ans-1.jpg",
+    "klein": "/bilder/rosette-fresko/ans-1_s.jpg"
+   },
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-fresko/ans-hell.jpg",
+    "klein": "/bilder/rosette-fresko/ans-hell_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-fresko/wb-1.jpg",
+    "klein": "/bilder/rosette-fresko/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-fresko/wb-2.jpg",
+    "klein": "/bilder/rosette-fresko/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-fresko/wb-3.jpg",
+    "klein": "/bilder/rosette-fresko/wb-3_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/rosette-fresko/det.jpg",
+    "klein": "/bilder/rosette-fresko/det_s.jpg"
+   }
+  ]
+ },
+ "stucco-ceiling": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/stucco-ceiling/ans.jpg",
+    "klein": "/bilder/stucco-ceiling/ans_s.jpg"
+   },
+   {
+    "key": "ans-2",
+    "typ": "ans",
+    "rang": 3,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/stucco-ceiling/ans-2.jpg",
+    "klein": "/bilder/stucco-ceiling/ans-2_s.jpg"
+   },
+   {
+    "key": "wb",
+    "typ": "wb",
+    "rang": 20,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/stucco-ceiling/wb.jpg",
+    "klein": "/bilder/stucco-ceiling/wb_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/stucco-ceiling/wb-2.jpg",
+    "klein": "/bilder/stucco-ceiling/wb-2_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/stucco-ceiling/det.jpg",
+    "klein": "/bilder/stucco-ceiling/det_s.jpg"
+   }
+  ]
+ },
+ "elemente-des-lebens": {
+  "views": [
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/elemente-des-lebens/ans-hell.jpg",
+    "klein": "/bilder/elemente-des-lebens/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-hellx",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/elemente-des-lebens/ans-hellx.jpg",
+    "klein": "/bilder/elemente-des-lebens/ans-hellx_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/elemente-des-lebens/ans-dunkel.jpg",
+    "klein": "/bilder/elemente-des-lebens/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/elemente-des-lebens/wb-1.jpg",
+    "klein": "/bilder/elemente-des-lebens/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/elemente-des-lebens/wb-2.jpg",
+    "klein": "/bilder/elemente-des-lebens/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/elemente-des-lebens/wb-3.jpg",
+    "klein": "/bilder/elemente-des-lebens/wb-3_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/elemente-des-lebens/det.jpg",
+    "klein": "/bilder/elemente-des-lebens/det_s.jpg"
+   }
+  ]
+ },
+ "bouton-vintage-eins": {
+  "views": [
+   {
+    "key": "ans-hell",
+    "typ": "ans-hell",
+    "rang": 4,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-eins/ans-hell.jpg",
+    "klein": "/bilder/bouton-vintage-eins/ans-hell_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-eins/ans-dunkel.jpg",
+    "klein": "/bilder/bouton-vintage-eins/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-eins/wb-1.jpg",
+    "klein": "/bilder/bouton-vintage-eins/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-eins/wb-2.jpg",
+    "klein": "/bilder/bouton-vintage-eins/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-eins/wb-3.jpg",
+    "klein": "/bilder/bouton-vintage-eins/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-eins/wb-4.jpg",
+    "klein": "/bilder/bouton-vintage-eins/wb-4_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/bouton-vintage-eins/det.jpg",
+    "klein": "/bilder/bouton-vintage-eins/det_s.jpg"
+   }
+  ]
+ },
+ "tausend-arme": {
+  "views": [
+   {
+    "key": "ans",
+    "typ": "ans",
+    "rang": 1,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/tausend-arme/ans.jpg",
+    "klein": "/bilder/tausend-arme/ans_s.jpg"
+   },
+   {
+    "key": "ans-dunkel",
+    "typ": "ans-dunkel",
+    "rang": 5,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/tausend-arme/ans-dunkel.jpg",
+    "klein": "/bilder/tausend-arme/ans-dunkel_s.jpg"
+   },
+   {
+    "key": "wb-1",
+    "typ": "wb",
+    "rang": 21,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/tausend-arme/wb-1.jpg",
+    "klein": "/bilder/tausend-arme/wb-1_s.jpg"
+   },
+   {
+    "key": "wb-2",
+    "typ": "wb",
+    "rang": 22,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/tausend-arme/wb-2.jpg",
+    "klein": "/bilder/tausend-arme/wb-2_s.jpg"
+   },
+   {
+    "key": "wb-3",
+    "typ": "wb",
+    "rang": 23,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/tausend-arme/wb-3.jpg",
+    "klein": "/bilder/tausend-arme/wb-3_s.jpg"
+   },
+   {
+    "key": "wb-4",
+    "typ": "wb",
+    "rang": 24,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/tausend-arme/wb-4.jpg",
+    "klein": "/bilder/tausend-arme/wb-4_s.jpg"
+   },
+   {
+    "key": "wb-5",
+    "typ": "wb",
+    "rang": 25,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/tausend-arme/wb-5.jpg",
+    "klein": "/bilder/tausend-arme/wb-5_s.jpg"
+   },
+   {
+    "key": "det",
+    "typ": "det",
+    "rang": 90,
+    "w": 1300,
+    "h": 1300,
+    "big": "/bilder/tausend-arme/det.jpg",
+    "klein": "/bilder/tausend-arme/det_s.jpg"
+   }
+  ]
+ }
+}

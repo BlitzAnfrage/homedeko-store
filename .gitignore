@@ -1,0 +1,16 @@
+node_modules/
+.next/
+_rohbilder/
+*.log
+.env*.local
+
+# Local Netlify folder
+.netlify
+
+# Entwicklungs-Artefakte (QA-Screenshots, Skripte, lokale Order/Newsletter-Daten)
+_data/*.jpg
+_data/*.png
+_data/*.cjs
+_data/devlog*.txt
+_data/bestellungen.json
+_data/newsletter.json

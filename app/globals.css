@@ -1,0 +1,409 @@
+@import "tailwindcss";
+
+/* ─────────── Homedeko Store — „Galerie mit Gefühl" ───────────
+   Branding-Schema siehe BRANDING.md: warme Galerie-Basis (Creme/Ink) plus
+   Emotionsfarben aus der Motiv-Kollektion — Bordeaux (Marke/Emotion),
+   Gold (Kauf), Terra/Petrol/Rosé/Sepia (Motiv-Welten). Preise dunkel,
+   Ersparnis grün, KEIN Rot im Kaufprozess, keine Schatten im Kartenraster. */
+:root {
+  --bg: #faf7f2;
+  --surface: #ffffff;
+  --ink: #262019;
+  --ink-strong: #1a1511;
+  --muted: #7a7166;
+  --line: #eae3d7;
+
+  --bordeaux: #7c2237;
+  --bordeaux-deep: #5e1a2a;
+  --bordeaux-soft: #f7e9ec;
+
+  --gold: #b18435;
+  --gold-bright: #caa04f;
+  --gold-ink: #8a6626;
+  --gold-soft: #f5edda;
+
+  --terra: #c06542;      --terra-soft: #f8ece5;
+  --petrol: #256b70;     --petrol-soft: #e7f1f1;
+  --rose: #b25277;       --rose-soft: #f9ecf2;
+  --sepia: #8a6a45;      --sepia-soft: #f3ece1;
+
+  --ok: #2e7d43;         --ok-soft: #e8f3ea;
+
+  /* Rückwärtskompatible Aliase (bestehende Klassen accent = Gold) */
+  --accent: var(--gold);
+  --accent-ink: var(--gold-ink);
+  --accent-soft: var(--gold-soft);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-strong: var(--ink-strong);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-bordeaux: var(--bordeaux);
+  --color-bordeaux-deep: var(--bordeaux-deep);
+  --color-bordeaux-soft: var(--bordeaux-soft);
+  --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
+  --color-gold-ink: var(--gold-ink);
+  --color-gold-soft: var(--gold-soft);
+  --color-terra: var(--terra);
+  --color-terra-soft: var(--terra-soft);
+  --color-petrol: var(--petrol);
+  --color-petrol-soft: var(--petrol-soft);
+  --color-rose: var(--rose);
+  --color-rose-soft: var(--rose-soft);
+  --color-sepia: var(--sepia);
+  --color-sepia-soft: var(--sepia-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-playfair), Georgia, "Times New Roman", serif;
+}
+.display-italic {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-style: italic;
+}
+
+.eyebrow {
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--gold-ink); font-weight: 600;
+}
+
+/* Aktionsleiste: Bordeaux-Verlauf mit Gold-Akzent */
+.bar-aktion {
+  background: linear-gradient(90deg, var(--bordeaux-deep) 0%, var(--bordeaux) 55%, #8d3046 100%);
+  color: #f8ede2;
+}
+.bar-aktion a { color: var(--gold-bright); font-weight: 600; }
+
+/* Brandlinie: Farbverlauf als Abschluss-/Trennelement */
+.brandlinie {
+  height: 3px;
+  background: linear-gradient(90deg, var(--bordeaux) 0%, var(--gold-bright) 45%, var(--terra) 100%);
+}
+
+/* Buttons */
+.btn-gold {
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color: #fff; border-radius: 5px; font-weight: 600; letter-spacing: 0.01em;
+  transition: filter .15s ease, transform .12s ease;
+}
+.btn-gold:hover { filter: brightness(1.07) saturate(1.05); }
+.btn-gold:active { transform: scale(.985); }
+.btn-bordeaux {
+  background: var(--bordeaux); color: #fff; border-radius: 5px; font-weight: 600;
+  transition: filter .15s ease, transform .12s ease;
+}
+.btn-bordeaux:hover { filter: brightness(1.12); }
+.btn-bordeaux:active { transform: scale(.985); }
+.btn-ink {
+  background: var(--ink-strong); color: #fff; border-radius: 5px; font-weight: 600;
+  transition: opacity .15s ease, transform .12s ease;
+}
+.btn-ink:hover { opacity: .88; }
+.btn-ghost {
+  background: transparent; color: var(--ink); border: 1px solid var(--line);
+  border-radius: 5px; font-weight: 600; transition: border-color .15s, background .15s, color .15s;
+}
+.btn-ghost:hover { border-color: var(--bordeaux); background: var(--bordeaux-soft); color: var(--bordeaux); }
+
+/* Karten & Auswahl-Kacheln */
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  transition: border-color .18s ease;
+}
+.card:hover { border-color: var(--gold); }
+
+.opt {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+  cursor: pointer; position: relative;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+.opt:hover { border-color: var(--gold); }
+.opt[data-selected="true"] { border-color: var(--gold); background: var(--gold-soft); box-shadow: inset 0 0 0 1px var(--gold); }
+.opt:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Chips (Welt-Farben via inline style: color / background) */
+.chip {
+  display: inline-block; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border-radius: 3px; padding: 4px 8px;
+}
+
+.fade-in { animation: fadeIn .5s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.scroll-x { scrollbar-width: thin; }
+
+.zoomwrap { overflow: hidden; }
+.zoomwrap img { transition: transform .5s ease; }
+.card:hover .zoomwrap img { transform: scale(1.04); }
+
+/* Hero-Bühne: heller Creme-Verlauf mit Blush oben rechts, Gold-Hauch unten links */
+.hero-buehne {
+  background:
+    radial-gradient(60% 70% at 88% 8%, var(--bordeaux-soft) 0%, transparent 58%),
+    radial-gradient(55% 65% at 6% 95%, var(--gold-soft) 0%, transparent 52%),
+    linear-gradient(180deg, #fffdf9 0%, var(--bg) 100%);
+}
+
+/* Passepartout: Bild hängt gerahmt an heller Galeriewand */
+.passepartout {
+  background: #fff; padding: 12px; border: 1px solid var(--gold-soft);
+  border-radius: 10px;
+  box-shadow: 0 30px 70px -34px rgba(94, 26, 42, .28);
+}
+
+/* AR-Signatur-Button — Bordeaux (Marken-Emotionsfarbe), passt zur warmen Welt */
+.btn-ar {
+  background: var(--bordeaux); color: #fff; border-radius: 6px; font-weight: 600;
+  transition: filter .15s ease, transform .12s ease;
+}
+.btn-ar:hover { filter: brightness(1.12); }
+.btn-ar:active { transform: scale(.985); }
+
+/* Helles Glas (statt dunklem .glas außerhalb des Kamera-Suchers) */
+.glas-hell {
+  background: rgba(255, 255, 255, .86); color: var(--ink);
+  border: 1px solid var(--line); backdrop-filter: blur(6px);
+  border-radius: 999px; font-size: 12.5px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px;
+}
+
+/* ── v3: Editorial & Emotion ──────────────────────────────────── */
+
+/* Dunkle Galerie-Sektionen */
+.galerie-dunkel {
+  background:
+    radial-gradient(80% 100% at 50% 0%, #2a2018 0%, transparent 60%),
+    #171310;
+  color: #efe8dc;
+}
+.galerie-dunkel .eyebrow { color: var(--gold-bright); }
+
+/* Scroll-Reveal (JS setzt .is-in via IntersectionObserver) */
+[data-reveal] { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+[data-reveal].is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
+/* Karten-Lift beim Hover (warmer, weicher Schatten — bewusst dezent) */
+.lift { transition: transform .3s ease, box-shadow .3s ease, border-color .18s ease; }
+.lift:hover { transform: translateY(-4px); box-shadow: 0 18px 40px -18px rgba(94, 26, 42, .35); }
+
+/* Stimmungs-Kacheln: Vollbild-Foto mit Serif-Wort */
+.mood {
+  position: relative; overflow: hidden; border-radius: 8px; display: block;
+}
+.mood img { transition: transform .8s ease; }
+.mood:hover img { transform: scale(1.06); }
+.mood::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(20, 12, 10, .58) 100%);
+}
+.mood .mood-wort { position: absolute; left: 20px; bottom: 16px; z-index: 1; color: #fff; text-shadow: 0 1px 12px rgba(0, 0, 0, .5); }
+
+/* Horizontaler Snap-Scroller */
+.snap-row {
+  display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+  padding-bottom: 8px; scrollbar-width: thin;
+}
+.snap-row > * { scroll-snap-align: start; flex: 0 0 auto; }
+
+/* Bemaßungs-Vorschau: echtes Produktbild mit feinen Maßlinien (Möbelhaus-Stil) */
+.masse { position: relative; }
+.masse .motiv-img { transition: width .35s ease, height .35s ease; }
+.mass-linie {
+  position: relative; background: var(--ink); opacity: .55;
+}
+.mass-linie::before, .mass-linie::after {
+  content: ""; position: absolute; background: var(--ink);
+}
+.mass-h { height: 1px; }
+.mass-h::before { left: 0; top: -4px; width: 1px; height: 9px; }
+.mass-h::after { right: 0; top: -4px; width: 1px; height: 9px; }
+.mass-v { width: 1px; }
+.mass-v::before { top: 0; left: -4px; height: 1px; width: 9px; }
+.mass-v::after { bottom: 0; left: -4px; height: 1px; width: 9px; }
+.mass-text {
+  font-size: 11.5px; font-weight: 600; color: var(--ink); letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+}
+.sofa-linie { border-top: 3px solid #cfc6b4; border-radius: 2px; }
+
+/* ── Hero v3: Ken-Burns, Motiv-Fächer, Marquee ────────────────── */
+.kenburns { animation: kenburns 9s ease-in-out infinite alternate; }
+@keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.09) translateY(-1.5%); } }
+
+.stagger > * { opacity: 0; transform: translateY(18px); animation: stagIn .7s ease forwards; }
+.stagger > *:nth-child(1) { animation-delay: .05s; }
+.stagger > *:nth-child(2) { animation-delay: .18s; }
+.stagger > *:nth-child(3) { animation-delay: .32s; }
+.stagger > *:nth-child(4) { animation-delay: .46s; }
+.stagger > *:nth-child(5) { animation-delay: .6s; }
+@keyframes stagIn { to { opacity: 1; transform: none; } }
+
+/* Fächer aus klickbaren Motiv-Karten */
+.faecher { position: relative; }
+.faecher-karte {
+  position: absolute; border-radius: 8px; overflow: hidden; display: block;
+  border: 5px solid #fff;
+  box-shadow: 0 24px 60px -18px rgba(94, 26, 42, .28);
+  transition: transform .45s cubic-bezier(.22, 1, .36, 1), box-shadow .3s ease;
+}
+.faecher-karte:hover { transform: rotate(0deg) translateY(-10px) scale(1.04) !important; z-index: 5 !important; }
+.faecher-chip {
+  position: absolute; left: 10px; bottom: 10px;
+  background: rgba(255, 255, 255, .9); color: var(--ink-strong); border: 1px solid var(--line);
+  backdrop-filter: blur(4px);
+  font-size: 11.5px; font-weight: 600; padding: 5px 9px; border-radius: 4px;
+}
+
+/* Marquee-Laufband */
+.marquee { overflow: hidden; white-space: nowrap; }
+.marquee-spur { display: inline-flex; animation: marquee 38s linear infinite; }
+.marquee:hover .marquee-spur { animation-play-state: paused; }
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Scroll-Hinweis */
+.scroll-pfeil { animation: scrollPfeil 1.8s ease-in-out infinite; }
+@keyframes scrollPfeil { 0%, 100% { transform: translateY(0); opacity: .7; } 50% { transform: translateY(7px); opacity: 1; } }
+
+/* ── Hero v5: lebendige Galerie-Szene ── */
+/* Held-Foto rechts mit langsamem Ken-Burns */
+.hero-szene { animation: heroKen 14s ease-in-out infinite alternate; }
+@keyframes heroKen { from { transform: scale(1.02); } to { transform: scale(1.1) translate(-1.5%, -1%); } }
+
+/* schwebendes Motiv vor der Szene */
+.hero-float { animation: heroFloat 5.5s ease-in-out infinite; }
+@keyframes heroFloat { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-14px) rotate(-1deg); } }
+
+/* sanftes Ein-Enthüllen der Szene beim Slide-Wechsel */
+.hero-reveal { animation: heroReveal 1s cubic-bezier(.22,1,.36,1); }
+@keyframes heroReveal { from { opacity: 0; transform: scale(1.06); } to { opacity: 1; transform: scale(1); } }
+
+/* Preis-Tag am schwebenden Motiv */
+.hero-tag {
+  background: #fff; color: var(--ink-strong); border: 1px solid var(--line);
+  box-shadow: 0 10px 26px -12px rgba(94,26,42,.35);
+  border-radius: 8px; padding: 8px 14px; font-weight: 600;
+}
+
+
+/* AR-Motiv: realistischer Layer — mehrschichtiger Schatten + Raumlicht-Verlauf */
+.ar-motiv {
+  position: relative;
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, .38),
+    0 24px 55px -14px rgba(0, 0, 0, .55),
+    inset 0 0 0 1px rgba(0, 0, 0, .22);
+}
+.ar-motiv::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(128deg,
+    rgba(255, 255, 255, .16) 0%, rgba(255, 255, 255, .05) 18%,
+    transparent 40%, transparent 62%, rgba(0, 0, 0, .2) 100%);
+}
+.ar-pop { animation: arPop .4s cubic-bezier(.22, 1, .36, 1); }
+@keyframes arPop { 0% { transform: translate(-50%, -50%) scale(.94); } 60% { transform: translate(-50%, -50%) scale(1.015); } 100% { transform: translate(-50%, -50%) scale(1); } }
+
+/* ── AR-Funnel (Wii-Stil): Schritte, Wasserwaage, Coach, Funken ── */
+.schritt-in { animation: schrittIn .45s cubic-bezier(.22, 1, .36, 1); }
+@keyframes schrittIn { from { opacity: 0; transform: translateX(26px); } to { opacity: 1; transform: none; } }
+
+.zahl-kreis {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 52px; width: 52px; border-radius: 999px;
+  background: var(--bordeaux); color: #fff;
+  font-family: var(--font-playfair), Georgia, serif; font-size: 26px;
+}
+
+/* Messlinie in der Abstands-Grafik wächst animiert */
+.mess-anim { transform-origin: left center; animation: messWachsen 1.6s ease-out infinite alternate; }
+@keyframes messWachsen { from { transform: scaleX(.55); opacity: .6; } to { transform: scaleX(1); opacity: 1; } }
+
+/* Live-Wasserwaage */
+.wasserwaage {
+  position: relative; height: 190px; width: 190px; border-radius: 999px;
+  border: 3px solid var(--line); background: radial-gradient(circle at 50% 40%, #fff, #f2ede3);
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+.wasserwaage[data-ok="true"] { border-color: var(--ok); box-shadow: 0 0 0 6px var(--ok-soft); }
+.ww-ziel {
+  position: absolute; left: 50%; top: 50%; height: 58px; width: 58px;
+  transform: translate(-50%, -50%); border-radius: 999px;
+  border: 2px dashed var(--gold); opacity: .8;
+}
+.ww-blase {
+  position: absolute; left: 50%; top: 50%; height: 34px; width: 34px; border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold));
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .25); transition: transform .09s linear, background .2s;
+}
+.wasserwaage[data-ok="true"] .ww-blase { background: radial-gradient(circle at 35% 30%, #58b06f, var(--ok)); }
+.puls-ring { animation: pulsRing 1.5s ease-out infinite; }
+@keyframes pulsRing {
+  0% { box-shadow: 0 0 0 0 rgba(177, 132, 53, .5); }
+  70% { box-shadow: 0 0 0 14px rgba(177, 132, 53, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(177, 132, 53, 0); }
+}
+
+/* Coach-Hinweise auf der Bühne */
+.coach { animation: coachHuepf 1.4s ease-in-out infinite; }
+@keyframes coachHuepf { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -8px); } }
+
+/* Kamera-Sucher: Glas-Chips, Drittel-Raster, Horizont-Linie, Auslöser */
+.glas {
+  background: rgba(12, 10, 8, .55); color: #fff; backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, .14); border-radius: 999px;
+  font-size: 12.5px; font-weight: 500; letter-spacing: .01em;
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px;
+}
+.raster-linie { position: absolute; background: rgba(255, 255, 255, .18); pointer-events: none; }
+.horizont {
+  height: 2px; border-radius: 2px; background: rgba(255, 255, 255, .85);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .5);
+  transition: background .25s ease, box-shadow .25s ease;
+}
+.horizont[data-ok="true"] { background: var(--ok); box-shadow: 0 0 10px rgba(46, 125, 67, .8); }
+.ausloeser {
+  height: 66px; width: 66px; border-radius: 999px;
+  border: 4px solid #fff; background: rgba(255, 255, 255, .25);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: transform .12s ease, background .2s ease;
+}
+.ausloeser:active { transform: scale(.92); }
+.ausloeser > span { height: 48px; width: 48px; border-radius: 999px; background: #fff; }
+
+/* Gold-Funken beim Kauf */
+.funke {
+  position: absolute; pointer-events: none; color: var(--gold-bright);
+  font-size: 18px; line-height: 1;
+  animation: funkeFlug .85s ease-out forwards;
+}
+@keyframes funkeFlug {
+  0% { opacity: 1; transform: translate(0, 0) scale(.5) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.35) rotate(80deg); }
+}
+
+/* Zähler im Manifest */
+.zahl-display {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 44px; line-height: 1; color: var(--gold-bright);
+}
