@@ -26,14 +26,14 @@ export default function ArHomeTeaser({
     <>
       <HeroSlider slides={slides} onAr={oeffnen} />
 
-      {/* ── AR-Feature-Sektion (Petrol-Signatur) ── */}
-      <section className="py-16 lg:py-20" style={{ background: "var(--bordeaux-soft)" }} data-reveal>
-        <div className="mx-auto max-w-7xl px-4 grid lg:grid-cols-[5fr_6fr] gap-10 items-center">
-          <div>
+      {/* ── AR-Feature-Sektion ── */}
+      <section className="py-10 lg:py-20" style={{ background: "var(--bordeaux-soft)" }} data-reveal>
+        <div className="mx-auto max-w-7xl px-4 grid lg:grid-cols-[5fr_6fr] gap-6 lg:gap-10 items-center">
+          <div className="order-2 lg:order-none">
             <div className="text-[11px] tracking-[0.22em] uppercase font-semibold mb-3" style={{ color: "var(--bordeaux)" }}>
               Kostenlos · direkt im Browser · keine App
             </div>
-            <h2 className="font-display text-3xl lg:text-[40px] leading-tight text-ink-strong">
+            <h2 className="font-display text-[28px] lg:text-[40px] leading-tight text-ink-strong">
               Sieh jedes Motiv an <span className="display-italic" style={{ color: "var(--bordeaux)" }}>deiner</span> Wand.
             </h2>
             <p className="mt-4 text-[15.5px] text-muted max-w-lg leading-relaxed">
@@ -55,8 +55,8 @@ export default function ArHomeTeaser({
           </div>
 
           {/* Vorschau-Karte: echtes Wohnbeispiel mit realistisch platziertem Motiv */}
-          <button onClick={oeffnen} className="relative block rounded-[20px] overflow-hidden border-8 border-white cursor-pointer group"
-            style={{ boxShadow: "0 30px 70px -30px rgba(94,26,42,.4)" }}>
+          <button onClick={oeffnen} className="order-1 lg:order-none relative block rounded-[14px] lg:rounded-[20px] overflow-hidden border-4 lg:border-8 border-white cursor-pointer group"
+            style={{ boxShadow: "0 20px 40px -20px rgba(94,26,42,.4)" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={teaserBild} alt={`${teaserMotiv} an der Wand`} className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
             <span className="glas-hell absolute left-4 top-4"><IconCamera size={14} style={{ color: "var(--bordeaux)" }} /> Live-Vorschau</span>

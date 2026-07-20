@@ -111,7 +111,7 @@ export default function Home() {
 
       {/* ── 5 · Motiv des Monats (hell, Passepartout) ── */}
       <section className="bg-bordeaux-soft" data-reveal>
-        <div className="mx-auto max-w-7xl px-4 py-16 lg:py-20 grid lg:grid-cols-2 gap-10 items-center">
+        <div className="mx-auto max-w-7xl px-4 py-10 lg:py-20 grid lg:grid-cols-2 gap-6 lg:gap-10 items-center">
           {monatBild && (
             <Link href={`/produkt/${monat.id}`} className="passepartout lift block">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -138,7 +138,7 @@ export default function Home() {
       </section>
 
       {/* ── 6 · Stimmungs-Navigation (Mood-Cards square) ── */}
-      <section className="mx-auto max-w-7xl px-4 pt-16" data-reveal>
+      <section className="mx-auto max-w-7xl px-4 pt-10 lg:pt-16" data-reveal>
         <div className="text-center max-w-2xl mx-auto mb-8">
           <div className="eyebrow mb-2">Wie soll sich dein Raum anfühlen?</div>
           <h2 className="font-display text-3xl lg:text-4xl text-ink-strong">
@@ -170,7 +170,7 @@ export default function Home() {
       </section>
 
       {/* ── 5 · Lieblingsmotive als Scroller ── */}
-      <section id="bestseller" className="mx-auto max-w-7xl px-4 pt-16 scroll-mt-24" data-reveal>
+      <section id="bestseller" className="mx-auto max-w-7xl px-4 pt-10 lg:pt-16 scroll-mt-24" data-reveal>
         <div className="flex items-end justify-between gap-4 mb-6">
           <div>
             <div className="eyebrow mb-2">Handverlesen von unserer Redaktion</div>
@@ -192,7 +192,7 @@ export default function Home() {
       </section>
 
       {/* ── 8 · Kollektions-Mosaik: 24 zeigen statt behaupten (hell) ── */}
-      <section className="bg-gold-soft mt-16 py-16 lg:py-20" data-reveal>
+      <section className="bg-gold-soft mt-10 lg:mt-16 py-10 lg:py-20" data-reveal>
         <div className="mx-auto max-w-5xl px-4 text-center">
           <div className="eyebrow mb-4">Unser Versprechen</div>
           <p className="font-display display-italic text-3xl lg:text-[40px] leading-snug text-ink-strong">
@@ -230,7 +230,7 @@ export default function Home() {
       </section>
 
       {/* ── 7 · Produktarten kompakt ── */}
-      <section className="mx-auto max-w-7xl px-4 pt-16" data-reveal>
+      <section className="mx-auto max-w-7xl px-4 pt-10 lg:pt-16" data-reveal>
         <div className="eyebrow mb-2">Ein Motiv, vier Möglichkeiten</div>
         <h2 className="font-display text-3xl text-ink-strong mb-6">Wie soll dein Motiv an die Wand?</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -283,7 +283,7 @@ export default function Home() {
       )}
 
       {/* ── 9 · Qualität ── */}
-      <section className="mx-auto max-w-7xl px-4 pt-16 grid lg:grid-cols-2 gap-8 items-center" data-reveal>
+      <section className="mx-auto max-w-7xl px-4 pt-10 lg:pt-16 grid lg:grid-cols-2 gap-8 items-center" data-reveal>
         {motivBild("goldtattoo") && (
           <div className="rounded-md overflow-hidden border border-line order-2 lg:order-1 lift">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -316,7 +316,7 @@ export default function Home() {
       </section>
 
       {/* ── 10 · Wohnbeispiel-Mosaik ── */}
-      <section className="mx-auto max-w-7xl px-4 pt-16" data-reveal>
+      <section className="mx-auto max-w-7xl px-4 pt-10 lg:pt-16" data-reveal>
         <div className="text-center mb-7">
           <div className="eyebrow mb-2">Zuhause bei unseren Motiven</div>
           <h2 className="font-display text-3xl text-ink-strong">
@@ -343,7 +343,7 @@ export default function Home() {
       <div className="mt-16"><Newsletter /></div>
 
       {/* ── 11 · FAQ ── */}
-      <section className="mx-auto max-w-4xl px-4 pt-16" data-reveal>
+      <section className="mx-auto max-w-4xl px-4 pt-10 lg:pt-16" data-reveal>
         <div className="text-center mb-7">
           <div className="eyebrow mb-2">Gut zu wissen</div>
           <h2 className="font-display text-3xl text-ink-strong">Häufige Fragen</h2>
@@ -374,7 +374,7 @@ export default function Home() {
       </section>
 
       {/* ── 12 · SEO-Block ── */}
-      <section className="mx-auto max-w-4xl px-4 pt-16 text-[14px] leading-relaxed text-muted space-y-4">
+      <section className="mx-auto max-w-4xl px-4 pt-10 lg:pt-16 text-[14px] leading-relaxed text-muted space-y-4">
         <h2 className="font-display text-2xl text-ink-strong">Wandbilder online kaufen im Homedeko Store</h2>
         <p>
           Im Homedeko Store findest du <Link href="/kategorie/leinwandbilder" className="text-gold-ink underline">Leinwandbilder</Link>,{" "}
