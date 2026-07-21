@@ -1,14 +1,16 @@
 "use client";
-/* AR-Wandvorschau v4 — Kamera-first wie eine echte Kamera-App:
-   Öffnen → Sucher geht direkt auf. Die Führung passiert IM Bild: dezente
-   Glas-Hinweise (2–3 m Abstand · gerade halten), Drittel-Raster, Live-Horizont-
-   Linie (wird grün, wenn das Handy gerade ist) und ein großer Auslöser.
-   Nach dem Schuss: Motiv maßstabsgetreu platzieren, Größe direkt wechseln, kaufen.
+/* AR-Wandvorschau v5 — Kamera-first wie eine echte Kamera-App:
+   Öffnen → Sucher geht direkt auf, vollflächig. Die Führung ist rein visuell,
+   ohne Text: Drittel-Raster, mitdrehende Wasserwaage-Linie und ein grünes Glühen,
+   sobald das Handy gerade gehalten wird. Ein großer Auslöser.
+   Nach dem Schuss: Motiv platzieren, Motiv direkt wechseln, Größe wählen und per
+   Zwei-Finger-Zoom / Regler an die eigene Wand anpassen (das Handy kann die
+   Entfernung nicht messen — der Nutzer justiert selbst), dann kaufen.
    Ohne Kamera (Desktop/HTTP): eleganter Foto-Upload statt Sucher. */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { euro, Groesse } from "@/lib/preise";
-import type { Produkt } from "@/lib/katalog";
+import { MOTIVE, produktById, motivBild, type Produkt } from "@/lib/katalog";
 import { IconCamera, IconCart, IconCheck, IconClose, IconMove } from "./Icon";
 
 type Phase = "lade" | "sucher" | "upload" | "platzieren";
@@ -21,8 +23,14 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
   const cart = useCart();
   const [phase, setPhase] = useState<Phase>("lade");
   const [foto, setFoto] = useState<string | null>(null);
+  /* aktives Motiv im AR — Start = übergebenes Produkt, im Platzieren wechselbar */
+  const [motivSlug, setMotivSlug] = useState(p.motiv.slug);
   const [gIdx, setGIdx] = useState(() => Math.max(0, p.groessen.findIndex((g) => g.beliebt)));
   const [pos, setPos] = useState({ x: 50, y: 42 });
+  /* Manuelle Feinskalierung des Motivs (1 = maßstabsgetreu). Ersetzt die vom
+     Handy NICHT messbare Wand-Entfernung: Nutzer zieht/pincht größer/kleiner,
+     um „näher/weiter" auszugleichen. */
+  const [skala, setSkala] = useState(1);
   const wandCm = 350; // angenommene sichtbare Wandbreite bei üblichem Foto-Abstand
   const [hinweisAus, setHinweisAus] = useState(false);
   const [funken, setFunken] = useState<{ dx: number; dy: number; l: number; t: number }[]>([]);
@@ -34,13 +42,18 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
   const streamRef = useRef<MediaStream | null>(null);
   const buehneRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ dx: number; dy: number } | null>(null);
+  /* Pinch-Zoom: aktive Finger + Startdistanz/Startskala für Zwei-Finger-Geste */
+  const zeigerRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchRef = useRef<{ dist: number; skala: number } | null>(null);
 
-  const groesse: Groesse = p.groessen[Math.min(gIdx, p.groessen.length - 1)];
+  /* Aktives Produkt = Leinwand-Version des gewählten Motivs (im AR immer Leinwand). */
+  const aktP = produktById(`leinwandbild-${motivSlug}`) ?? p;
+  const groesse: Groesse = aktP.groessen[Math.min(gIdx, aktP.groessen.length - 1)];
   const ratio = (groesse.b ?? 1) / (groesse.h ?? 1);
-  const motiv = p.bilder[0]?.big ?? "";
-  const panels = p.art === "set3" ? 3 : 1;
+  const motiv = aktP.bilder[0]?.big ?? "";
+  const panels = aktP.art === "set3" ? 3 : 1;
   const gesamtCm = (groesse.b ?? 60) * panels + (panels - 1) * 5;
-  const overlayPct = Math.min(96, (gesamtCm / wandCm) * 100);
+  const overlayPct = Math.min(98, Math.max(12, (gesamtCm / wandCm) * 100 * skala));
 
   const kameraStoppen = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -65,6 +78,7 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
       kameraStoppen();
       setPhase("lade"); setFoto(null); setHinweisAus(false);
       setGespeichert(false); setNeigung(null);
+      setMotivSlug(p.motiv.slug); setSkala(1); setPos({ x: 50, y: 42 });
       return;
     }
     let aktiv = true;
@@ -90,7 +104,10 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
     return () => { aktiv = false; kameraStoppen(); };
   }, [offen, kameraStoppen]);
 
-  /* Neigungssensor für die Horizont-Linie im Sucher */
+  /* Neigungssensor für die Horizont-Linie im Sucher.
+     iOS 13+ braucht requestPermission() nach einer NUTZER-GESTE (Tap) — deshalb
+     wird der Listener hier gebunden, aber die iOS-Freigabe passiert im Tap-Handler
+     sensorAnfordern() (unten). Auf Android/älterem iOS feuert der Sensor direkt. */
   useEffect(() => {
     if (!offen || phase !== "sucher") return;
     const h = (e: DeviceOrientationEvent) => {
@@ -98,14 +115,22 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
       setNeigung({ beta: e.beta, gamma: e.gamma });
     };
     window.addEventListener("deviceorientation", h);
-    const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
-    if (typeof DOE.requestPermission === "function") DOE.requestPermission?.().catch(() => {});
     return () => window.removeEventListener("deviceorientation", h);
   }, [offen, phase]);
 
+  const sensorAnfordern = useCallback(async () => {
+    const DOE = DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
+    if (typeof DOE.requestPermission === "function") {
+      try { await DOE.requestPermission(); } catch {}
+    }
+  }, []);
+
   if (!offen) return null;
 
-  const gerade = neigung != null && Math.abs(neigung.gamma) < 4 && Math.abs(neigung.beta - 90) < 12;
+  // großzügige Toleranz: „gerade genug", damit der grüne Rand realistisch erreichbar ist
+  const gerade = neigung != null && Math.abs(neigung.gamma) < 8 && Math.abs(neigung.beta - 90) < 22;
+  const sensorMoeglich = typeof window !== "undefined"
+    && typeof (DeviceOrientationEvent as unknown as { requestPermission?: unknown }).requestPermission === "function";
 
   /* Auslöser: aktuellen Kamera-Frame einfrieren */
   const ausloesen = () => {
@@ -138,21 +163,43 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
     leser.readAsDataURL(datei);
   };
 
+  const fingerDist = () => {
+    const [a, b] = [...zeigerRef.current.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  };
   const dragStart = (e: React.PointerEvent) => {
     setHinweisAus(true);
-    const b = buehneRef.current!.getBoundingClientRect();
-    dragRef.current = { dx: (e.clientX - b.left) / b.width * 100 - pos.x, dy: (e.clientY - b.top) / b.height * 100 - pos.y };
+    zeigerRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    if (zeigerRef.current.size === 2) {
+      // zweiter Finger → Pinch beginnt, Einzel-Drag pausiert
+      dragRef.current = null;
+      pinchRef.current = { dist: fingerDist(), skala };
+      return;
+    }
+    const rect = buehneRef.current!.getBoundingClientRect();
+    dragRef.current = { dx: (e.clientX - rect.left) / rect.width * 100 - pos.x, dy: (e.clientY - rect.top) / rect.height * 100 - pos.y };
   };
   const dragMove = (e: React.PointerEvent) => {
+    if (zeigerRef.current.has(e.pointerId)) zeigerRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    // Pinch: Motiv größer/kleiner ziehen (= „näher/weiter" ausgleichen)
+    if (pinchRef.current && zeigerRef.current.size >= 2) {
+      const faktor = fingerDist() / pinchRef.current.dist;
+      setSkala(Math.min(2.6, Math.max(0.45, pinchRef.current.skala * faktor)));
+      return;
+    }
     if (!dragRef.current) return;
-    const b = buehneRef.current!.getBoundingClientRect();
+    const rect = buehneRef.current!.getBoundingClientRect();
     setPos({
-      x: Math.min(96, Math.max(4, (e.clientX - b.left) / b.width * 100 - dragRef.current.dx)),
-      y: Math.min(96, Math.max(4, (e.clientY - b.top) / b.height * 100 - dragRef.current.dy)),
+      x: Math.min(96, Math.max(4, (e.clientX - rect.left) / rect.width * 100 - dragRef.current.dx)),
+      y: Math.min(96, Math.max(4, (e.clientY - rect.top) / rect.height * 100 - dragRef.current.dy)),
     });
   };
-  const dragEnde = () => { dragRef.current = null; };
+  const dragEnde = (e: React.PointerEvent) => {
+    zeigerRef.current.delete(e.pointerId);
+    if (zeigerRef.current.size < 2) pinchRef.current = null;
+    if (zeigerRef.current.size === 0) dragRef.current = null;
+  };
 
   const speichern = async () => {
     if (!foto) return;
@@ -188,7 +235,7 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
       ctx.restore();
     }
     const a = document.createElement("a");
-    a.download = `homedeko-${p.motiv.slug}-${groesse.label.replace(/[^\w]+/g, "-")}.jpg`;
+    a.download = `homedeko-${aktP.motiv.slug}-${groesse.label.replace(/[^\w]+/g, "-")}.jpg`;
     a.href = c.toDataURL("image/jpeg", 0.9);
     a.click();
     setGespeichert(true); setTimeout(() => setGespeichert(false), 3000);
@@ -196,8 +243,8 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
 
   const inWarenkorb = () => {
     cart.add({
-      produktId: p.id, name: p.name, bild: p.bilder[0]?.klein ?? "",
-      variante: `${p.art === "set3" ? "3er-Set" : "Leinwand"} · ${groesse.label}`,
+      produktId: aktP.id, name: aktP.name, bild: aktP.bilder[0]?.klein ?? "",
+      variante: `Leinwand · ${groesse.label}`,
       preis: groesse.preis, menge: 1,
     });
     vibrieren(35);
@@ -213,7 +260,7 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
     <div className="fixed inset-0 z-50 bg-black/88 flex items-stretch sm:items-center justify-center sm:p-3" onClick={zu}>
       <div className="bg-surface w-full h-full sm:h-auto sm:rounded-lg sm:max-w-3xl sm:max-h-[94vh] overflow-y-auto relative flex flex-col" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-line">
-          <div className="text-[15px] font-bold">„{p.motiv.name}“ an deiner Wand</div>
+          <div className="text-[15px] font-bold">„{aktP.motiv.name}“ an deiner Wand</div>
           <button onClick={zu} aria-label="Schließen" className="p-2 text-muted hover:text-ink"><IconClose size={22} /></button>
         </div>
 
@@ -227,15 +274,17 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
           <div className="relative flex-1 bg-ink-strong overflow-hidden">
             <video ref={videoRef} playsInline muted className="absolute inset-0 w-full h-full object-cover" />
 
-            {/* Interaktiver Ausricht-Rahmen: wird grün wenn gerade gehalten */}
-            <div className="absolute inset-4 pointer-events-none rounded-[10px] border-2 transition-colors duration-300"
-              style={{ borderColor: gerade ? "var(--ok)" : "rgba(255,255,255,.55)", boxShadow: gerade ? "0 0 0 3px rgba(46,125,67,.35)" : "none" }} />
-            {/* Eck-Marken für den Kamera-App-Look */}
+            {/* Ausricht-Rahmen mit Eck-Marken (weiß) */}
+            <div className="absolute inset-4 pointer-events-none rounded-[10px] border-2 transition-opacity duration-300"
+              style={{ borderColor: "rgba(255,255,255,.5)", opacity: gerade ? 0 : 1 }} />
             {["left-4 top-4 border-l-2 border-t-2 rounded-tl-[10px]", "right-4 top-4 border-r-2 border-t-2 rounded-tr-[10px]",
               "left-4 bottom-4 border-l-2 border-b-2 rounded-bl-[10px]", "right-4 bottom-4 border-r-2 border-b-2 rounded-br-[10px]"].map((c) => (
-              <span key={c} className={`absolute ${c} h-8 w-8 pointer-events-none transition-colors duration-300`}
-                style={{ borderColor: gerade ? "var(--ok)" : "#fff" }} />
+              <span key={c} className={`absolute ${c} h-8 w-8 pointer-events-none transition-opacity duration-300`}
+                style={{ borderColor: "#fff", opacity: gerade ? 0 : 1 }} />
             ))}
+
+            {/* GRÜNES GLÜHEN wenn gerade gehalten — reines visuelles Signal, kein Text */}
+            {gerade && <div className="gerade-glow rounded-[6px]" />}
 
             {/* Drittel-Raster dezent */}
             <span className="raster-linie left-1/3 top-0 bottom-0 w-px" />
@@ -243,7 +292,7 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
             <span className="raster-linie top-1/3 left-0 right-0 h-px" />
             <span className="raster-linie top-2/3 left-0 right-0 h-px" />
 
-            {/* Live-Wasserwaage: Horizontlinie dreht mit dem Handy, grün wenn gerade */}
+            {/* Wasserwaage-Linie: dreht mit dem Handy, grün wenn gerade */}
             {neigung && (
               <div className="absolute left-0 right-0 top-1/2 flex justify-center pointer-events-none">
                 <div className="horizont w-[50%]" data-ok={gerade}
@@ -251,12 +300,13 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
               </div>
             )}
 
-            {/* Großer Status-Hinweis oben — führt aktiv */}
-            <div className="absolute top-8 inset-x-0 flex flex-col items-center gap-2 px-4 pointer-events-none">
-              <span className={`px-4 py-2 rounded-full text-[14px] font-semibold text-white backdrop-blur-sm transition-colors duration-300 ${gerade ? "bg-ok/85" : "bg-black/55"}`}>
-                {gerade ? "✓ Perfekt ausgerichtet — jetzt auslösen" : neigung ? "Handy gerade halten — Linie waagerecht" : "Steh ca. 2–3 m entfernt, Wand frontal einrahmen"}
-              </span>
-            </div>
+            {/* iOS: einmaliger Tap, um die Wasserwaage (Neigungssensor) zu aktivieren */}
+            {sensorMoeglich && !neigung && (
+              <button onClick={sensorAnfordern}
+                className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm text-white text-[13px] font-semibold px-4 py-2 rounded-full">
+                Wasserwaage aktivieren
+              </button>
+            )}
 
             {/* Auslöser groß + Galerie */}
             <div className="absolute bottom-7 inset-x-0 flex items-center justify-center">
@@ -280,7 +330,7 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
               <div className="absolute left-6 bottom-6 right-6 text-white">
                 <div className="text-[11px] tracking-[0.2em] uppercase font-semibold text-gold-bright mb-2">Live an deiner Wand</div>
-                <h3 className="font-display text-[28px] sm:text-3xl leading-[1.15]">So sieht „{p.motiv.name}“ bei dir aus</h3>
+                <h3 className="font-display text-[28px] sm:text-3xl leading-[1.15]">So sieht „{aktP.motiv.name}“ bei dir aus</h3>
               </div>
             </div>
             {/* Aktionsbereich unten — fest */}
@@ -301,7 +351,7 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
         {/* ── Platzieren ── */}
         {phase === "platzieren" && foto && (
           <>
-            <div ref={buehneRef} className="relative w-full aspect-[4/3] bg-ink-strong overflow-hidden select-none touch-none">
+            <div ref={buehneRef} className="relative w-full shrink-0 aspect-[4/3] bg-ink-strong overflow-hidden select-none touch-none">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={foto} alt="Deine Wand" className="absolute inset-0 w-full h-full object-cover" />
               <div
@@ -325,15 +375,53 @@ export default function ArVorschau({ p, offen, zu }: { p: Produkt; offen: boolea
                 {groesse.label} · {euro(groesse.preis)}
               </span>
               <div className={`absolute bottom-4 inset-x-0 flex justify-center pointer-events-none transition-opacity duration-700 ${hinweisAus ? "opacity-0" : "opacity-100"}`}>
-                <span className="glas"><IconMove size={15} /> Ziehen zum Platzieren — Größe unten antippen</span>
+                <span className="glas"><IconMove size={15} /> Ziehen zum Platzieren · zwei Finger zum Zoomen</span>
               </div>
             </div>
 
             <div className="p-4 sm:p-5 space-y-4 relative">
+              {/* Motiv wechseln — horizontale Scroll-Reihe aller Motive */}
+              <div>
+                <div className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-muted mb-2">Motiv wechseln</div>
+                <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {MOTIVE.map((m) => {
+                    const mb = motivBild(m.slug);
+                    return (
+                      <button key={m.slug} onClick={() => { vibrieren(10); setMotivSlug(m.slug); }}
+                        className={`shrink-0 h-14 w-14 rounded-[6px] overflow-hidden border-2 transition-all ${m.slug === motivSlug ? "border-bordeaux scale-105" : "border-transparent opacity-70"}`}
+                        aria-label={m.name}>
+                        {mb && (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img src={mb.klein} alt={m.name} className="w-full h-full object-cover" loading="lazy" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              {/* Feinanpassung: gleicht Foto-Abstand aus (näher/weiter) — das Handy
+                  kann Entfernung nicht messen, also justiert der Nutzer selbst. */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-muted">An deine Wand anpassen</span>
+                  <button onClick={() => setSkala(1)} disabled={Math.abs(skala - 1) < 0.02}
+                    className="text-[11.5px] font-semibold text-bordeaux disabled:opacity-30 disabled:cursor-default">Maßstab zurücksetzen</button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button onClick={() => { vibrieren(8); setSkala((s) => Math.max(0.45, +(s - 0.1).toFixed(2))); }}
+                    aria-label="Kleiner" className="opt h-10 w-10 shrink-0 flex items-center justify-center text-[20px] font-bold leading-none">−</button>
+                  <input type="range" min={0.45} max={2.6} step={0.01} value={skala}
+                    onChange={(e) => setSkala(+e.target.value)}
+                    className="ar-skala flex-1" aria-label="Motiv-Größe an der Wand" />
+                  <button onClick={() => { vibrieren(8); setSkala((s) => Math.min(2.6, +(s + 0.1).toFixed(2))); }}
+                    aria-label="Größer" className="opt h-10 w-10 shrink-0 flex items-center justify-center text-[20px] font-bold leading-none">+</button>
+                </div>
+                <p className="mt-1.5 text-[11.5px] text-muted">Bild schief oder zu groß? Zieh es mit zwei Fingern oder nutz den Regler, bis es zu deiner Wand passt.</p>
+              </div>
               <div>
                 <div className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-muted mb-2">Größe wählen</div>
                 <div className="grid grid-cols-2 gap-2">
-                  {p.groessen.map((g, i) => (
+                  {aktP.groessen.map((g, i) => (
                     <button key={g.label} className="opt relative px-3 py-2 text-left text-[13px] font-semibold" data-selected={i === gIdx}
                       onClick={() => { vibrieren(12); setGIdx(i); }}>
                       {g.beliebt && <span className="absolute right-2 top-2 text-[8.5px] font-bold uppercase tracking-wide bg-gold text-white rounded-[3px] px-1 py-0.5">Top</span>}

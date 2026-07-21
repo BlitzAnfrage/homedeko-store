@@ -59,8 +59,6 @@ export default function ArHomeTeaser({
             style={{ boxShadow: "0 20px 40px -20px rgba(94,26,42,.4)" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={teaserBild} alt={`${teaserMotiv} an der Wand`} className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
-            <span className="glas-hell absolute left-4 top-4"><IconCamera size={14} style={{ color: "var(--bordeaux)" }} /> Live-Vorschau</span>
-            <span className="absolute right-4 bottom-4 glas-hell">„{teaserMotiv}“ · maßstabsgetreu</span>
           </button>
         </div>
       </section>

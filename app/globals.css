@@ -410,6 +410,35 @@ html.reveal-an [data-reveal].is-in { opacity: 1; transform: none; }
   transition: background .25s ease, box-shadow .25s ease;
 }
 .horizont[data-ok="true"] { background: var(--ok); box-shadow: 0 0 10px rgba(46, 125, 67, .8); }
+
+/* Grünes Voll-Glühen über den Sucher, wenn das Handy gerade gehalten wird */
+.gerade-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  box-shadow: inset 0 0 0 4px var(--ok), inset 0 0 60px 10px rgba(46, 125, 67, .55);
+  animation: geradePuls 1.2s ease-in-out infinite;
+}
+@keyframes geradePuls {
+  0%, 100% { opacity: .7; }
+  50% { opacity: 1; }
+}
+
+/* Regler zum Anpassen der Motivgröße an die eigene Wand (näher/weiter ausgleichen) */
+.ar-skala {
+  -webkit-appearance: none; appearance: none;
+  height: 6px; border-radius: 999px; background: var(--line);
+  outline: none; touch-action: none;
+}
+.ar-skala::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  height: 24px; width: 24px; border-radius: 999px;
+  background: var(--bordeaux); border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .28); cursor: pointer;
+}
+.ar-skala::-moz-range-thumb {
+  height: 24px; width: 24px; border-radius: 999px;
+  background: var(--bordeaux); border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .28); cursor: pointer;
+}
 .ausloeser {
   height: 66px; width: 66px; border-radius: 999px;
   border: 4px solid #fff; background: rgba(255, 255, 255, .25);

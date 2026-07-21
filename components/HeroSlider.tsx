@@ -46,10 +46,6 @@ export default function HeroSlider({ slides, onAr }: { slides: Slide[]; onAr?: (
             <img key={sl.szene} src={sl.szene} alt=""
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${i === idx ? "opacity-100" : "opacity-0"}`} />
           ))}
-          {/* Stimmungs-Label als Chip aufs Bild */}
-          <span className="absolute left-4 top-4 bg-black/45 backdrop-blur-sm text-white text-[10.5px] tracking-[0.18em] uppercase font-semibold px-2.5 py-1 rounded-full">
-            {s.stimmung}
-          </span>
           {/* Slide-Punkte */}
           <div className="absolute bottom-3 right-4 flex gap-1.5">
             {slides.map((sl, i) => (
@@ -78,8 +74,7 @@ export default function HeroSlider({ slides, onAr }: { slides: Slide[]; onAr?: (
         <div className="mx-auto max-w-7xl px-4 grid grid-cols-[46fr_54fr] items-center gap-4 min-h-[640px]">
           {/* Text-Panel links */}
           <div key={"t" + idx} className="stagger max-w-xl relative z-10 py-16">
-            <div className="eyebrow">{s.stimmung}</div>
-            <h1 className="font-display text-[60px] leading-[1.05] text-ink-strong mt-4">
+            <h1 className="font-display text-[60px] leading-[1.05] text-ink-strong">
               {s.zeile1} <span className="display-italic text-bordeaux">{s.akzent}</span>
               {s.zeile2 && <><br />{s.zeile2}</>}
             </h1>
