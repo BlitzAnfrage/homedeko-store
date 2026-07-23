@@ -47,6 +47,31 @@ export async function ladeMotive(): Promise<MotivOverride[]> {
   return (data as MotivOverride[]) ?? [];
 }
 
+export type PreisOverride = { key: string; motiv_slug: string; art: string; groessen: { label: string; b?: number; h?: number; preis: number; beliebt?: boolean }[] };
+export type MotivBild = { id: string; motiv_slug: string; url: string; typ: string; sortierung: number };
+export type EigenesMotiv = { slug: string; name: string; untertitel: string; intro: string; format: string; kategorien: string[]; bestseller: boolean; aktiv: boolean };
+
+export async function ladePreisOverrides(): Promise<PreisOverride[]> {
+  const sb = supabaseServer();
+  if (!sb) return [];
+  const { data } = await sb.from("preis_override").select("*");
+  return (data as PreisOverride[]) ?? [];
+}
+
+export async function ladeMotivBilder(): Promise<MotivBild[]> {
+  const sb = supabaseServer();
+  if (!sb) return [];
+  const { data } = await sb.from("motiv_bilder").select("*").order("sortierung");
+  return (data as MotivBild[]) ?? [];
+}
+
+export async function ladeEigeneMotive(): Promise<EigenesMotiv[]> {
+  const sb = supabaseServer();
+  if (!sb) return [];
+  const { data } = await sb.from("eigene_motive").select("*").order("erstellt", { ascending: false });
+  return (data as EigenesMotiv[]) ?? [];
+}
+
 export async function ladeBestellungen(limit = 100): Promise<Bestellung[]> {
   const sb = supabaseServer();
   if (!sb) return [];

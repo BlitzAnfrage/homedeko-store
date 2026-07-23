@@ -13,7 +13,11 @@ import {
   MOTIVE, PRODUKTE, KATEGORIEN, PRODUKTARTEN, WELT_FARBEN,
   type Produkt, type Motiv, type Ansicht,
 } from "./katalog";
-import type { Groesse, Produktart } from "./preise";
+import {
+  type Groesse, type Produktart,
+  LEINWAND_QUADRAT, LEINWAND_QUER, POSTER_QUADRAT, POSTER_DINA,
+  SET3_QUADRAT, SET3_PANORAMA, TAPETE, WALLPRINT,
+} from "./preise";
 
 export type { Produkt, Motiv, Ansicht };
 export { KATEGORIEN, PRODUKTARTEN, WELT_FARBEN };
@@ -29,10 +33,60 @@ function staffelId(art: Produktart, format: "quadrat" | "quer"): string {
   }
 }
 
+type MotivRow = { name: string | null; untertitel: string | null; intro: string | null; bestseller: boolean | null; aktiv: boolean };
+type EigenesMotiv = {
+  slug: string; name: string; untertitel: string; intro: string;
+  format: "quadrat" | "quer"; kategorien: string[]; bestseller: boolean; aktiv: boolean;
+};
 type DBState = {
   staffeln: Map<string, Groesse[]>;
-  motive: Map<string, { name: string | null; untertitel: string | null; intro: string | null; bestseller: boolean | null; aktiv: boolean }>;
+  motive: Map<string, MotivRow>;
+  /* Preis-Ausnahmen je "<slug>::<art>" → ersetzt die Staffel für dieses Produkt */
+  preisOverride: Map<string, Groesse[]>;
+  /* DB-Bilder je Motiv-Slug (überschreiben/ergänzen die Code-Bilder) */
+  bilder: Map<string, Ansicht[]>;
+  /* Im Admin neu angelegte Motive (nicht im Code) */
+  eigene: EigenesMotiv[];
 };
+
+/* Standard-Staffel (Code-Werte) für ein neues Motiv, falls die DB-Staffel fehlt. */
+function codeStaffel(art: Produktart, format: "quadrat" | "quer"): Groesse[] {
+  switch (art) {
+    case "leinwand": return format === "quadrat" ? LEINWAND_QUADRAT : LEINWAND_QUER;
+    case "poster": return format === "quadrat" ? POSTER_QUADRAT : POSTER_DINA;
+    case "set3": return format === "quadrat" ? SET3_QUADRAT : SET3_PANORAMA;
+    case "tapete": return TAPETE;
+    case "wallprint": return WALLPRINT;
+  }
+}
+
+/* Baut die Produkte (leinwand/set3/tapete/wallprint) für ein eigenes Motiv. */
+function baueEigeneProdukte(m: EigenesMotiv, db: DBState): Produkt[] {
+  const motiv: Motiv = {
+    slug: m.slug, name: m.name, untertitel: m.untertitel, intro: m.intro,
+    format: m.format, kategorien: m.kategorien, bestseller: m.bestseller,
+  };
+  const bilder = db.bilder.get(m.slug) ?? [];
+  return (["leinwand", "set3", "tapete", "wallprint"] as const).map((art) => {
+    const info = PRODUKTARTEN[art];
+    const groessen =
+      db.preisOverride.get(`${m.slug}::${art}`)
+      ?? db.staffeln.get(staffelId(art, m.format))
+      ?? codeStaffel(art, m.format);
+    const posterGroessen = art === "leinwand"
+      ? (db.preisOverride.get(`${m.slug}::poster`) ?? db.staffeln.get(staffelId("poster", m.format)) ?? codeStaffel("poster", m.format))
+      : undefined;
+    return {
+      id: `${info.slugPrefix}-${m.slug}`,
+      art, motiv,
+      name: `${info.name} „${m.name}“`,
+      groessen, posterGroessen,
+      ab: Math.min(...groessen.map((g) => g.preis)),
+      posterAb: posterGroessen ? Math.min(...posterGroessen.map((g) => g.preis)) : undefined,
+      bilder,
+    };
+  });
+}
 
 /* DB-Zustand einmal pro Aufruf laden. Next cached den Server-Component-Render,
    deshalb ist kein zusätzliches In-Memory-Caching nötig. */
@@ -40,9 +94,12 @@ async function ladeDBState(): Promise<DBState | null> {
   const sb = supabaseServer();
   if (!sb) return null;
   try {
-    const [staffelRes, motivRes] = await Promise.all([
+    const [staffelRes, motivRes, preisOvRes, bilderRes, eigeneRes] = await Promise.all([
       sb.from("preisstaffeln").select("id,groessen"),
       sb.from("motive_override").select("slug,name,untertitel,intro,bestseller,aktiv"),
+      sb.from("preis_override").select("key,groessen"),
+      sb.from("motiv_bilder").select("motiv_slug,url,typ,sortierung").order("sortierung"),
+      sb.from("eigene_motive").select("*").order("erstellt", { ascending: false }),
     ]);
     if (staffelRes.error || motivRes.error) return null;
 
@@ -50,20 +107,41 @@ async function ladeDBState(): Promise<DBState | null> {
     for (const s of staffelRes.data ?? []) {
       if (Array.isArray(s.groessen) && s.groessen.length) staffeln.set(s.id, s.groessen as Groesse[]);
     }
-    const motive = new Map<string, DBState["motive"] extends Map<string, infer V> ? V : never>();
+    const motive = new Map<string, MotivRow>();
     for (const m of motivRes.data ?? []) motive.set(m.slug, m);
 
-    return { staffeln, motive };
+    const preisOverride = new Map<string, Groesse[]>();
+    for (const p of preisOvRes.data ?? []) {
+      if (Array.isArray(p.groessen) && p.groessen.length) preisOverride.set(p.key, p.groessen as Groesse[]);
+    }
+
+    const bilder = new Map<string, Ansicht[]>();
+    for (const b of bilderRes.data ?? []) {
+      const liste = bilder.get(b.motiv_slug) ?? [];
+      liste.push({ key: b.url, typ: b.typ, w: 0, h: 0, big: b.url, klein: b.url });
+      bilder.set(b.motiv_slug, liste);
+    }
+
+    const eigene: EigenesMotiv[] = (eigeneRes.data as EigenesMotiv[]) ?? [];
+
+    return { staffeln, motive, preisOverride, bilder, eigene };
   } catch {
     return null;
   }
 }
 
-/* Ein Produkt mit DB-Daten überlagern (neue, unabhängige Kopie). */
+/* Ein Produkt mit DB-Daten überlagern (neue, unabhängige Kopie).
+   Reihenfolge Preise: Produkt-Ausnahme (preis_override) > zentrale Staffel > Code. */
 function ueberlagereProdukt(p: Produkt, db: DBState): Produkt {
-  const groessen = db.staffeln.get(staffelId(p.art, p.motiv.format)) ?? p.groessen;
+  const ovKey = `${p.motiv.slug}::${p.art}`;
+  const groessen =
+    db.preisOverride.get(ovKey)
+    ?? db.staffeln.get(staffelId(p.art, p.motiv.format))
+    ?? p.groessen;
   const posterGroessen = p.posterGroessen
-    ? db.staffeln.get(staffelId("poster", p.motiv.format)) ?? p.posterGroessen
+    ? db.preisOverride.get(`${p.motiv.slug}::poster`)
+      ?? db.staffeln.get(staffelId("poster", p.motiv.format))
+      ?? p.posterGroessen
     : undefined;
 
   const ov = db.motive.get(p.motiv.slug);
@@ -77,6 +155,10 @@ function ueberlagereProdukt(p: Produkt, db: DBState): Produkt {
       }
     : p.motiv;
 
+  // DB-Bilder ersetzen die Code-Bilder, wenn welche hochgeladen wurden
+  const dbBilder = db.bilder.get(p.motiv.slug);
+  const bilder = dbBilder && dbBilder.length ? dbBilder : p.bilder;
+
   const info = PRODUKTARTEN[p.art];
   return {
     ...p,
@@ -84,6 +166,7 @@ function ueberlagereProdukt(p: Produkt, db: DBState): Produkt {
     name: `${info.name} „${motiv.name}“`,
     groessen,
     posterGroessen,
+    bilder,
     ab: Math.min(...groessen.map((g) => g.preis)),
     posterAb: posterGroessen ? Math.min(...posterGroessen.map((g) => g.preis)) : undefined,
   };
@@ -101,31 +184,47 @@ function istAktiv(slug: string, db: DBState | null): boolean {
 export async function ladeKatalog(): Promise<Produkt[]> {
   const db = await ladeDBState();
   if (!db) return PRODUKTE;
-  return PRODUKTE
+  const codeProdukte = PRODUKTE
     .filter((p) => istAktiv(p.motiv.slug, db))
     .map((p) => ueberlagereProdukt(p, db));
+  // eigene, im Admin angelegte Motive dazu (nur aktive)
+  const eigeneProdukte = db.eigene
+    .filter((m) => m.aktiv)
+    .flatMap((m) => baueEigeneProdukte(m, db));
+  return [...eigeneProdukte, ...codeProdukte];
 }
 
 export async function ladeProduktById(id: string): Promise<Produkt | undefined> {
   const db = await ladeDBState();
+
+  // zuerst Code-Katalog
   const p = PRODUKTE.find((x) => x.id === id);
-  if (!p) return undefined;
-  // Detailseite zeigt das Produkt auch, wenn das Motiv ausgeblendet ist? Nein:
-  // ausgeblendete Motive sollen nicht kaufbar sein.
-  if (db && !istAktiv(p.motiv.slug, db)) return undefined;
-  return db ? ueberlagereProdukt(p, db) : p;
+  if (p) {
+    if (db && !istAktiv(p.motiv.slug, db)) return undefined; // ausgeblendet = nicht kaufbar
+    return db ? ueberlagereProdukt(p, db) : p;
+  }
+  // sonst eigenes Motiv?
+  if (db) {
+    const eigene = db.eigene.filter((m) => m.aktiv).flatMap((m) => baueEigeneProdukte(m, db));
+    return eigene.find((x) => x.id === id);
+  }
+  return undefined;
 }
 
 export async function ladeMotiveAktiv(): Promise<Motiv[]> {
   const db = await ladeDBState();
-  const liste = db ? MOTIVE.filter((m) => istAktiv(m.slug, db)) : MOTIVE;
-  if (!db) return liste;
-  return liste.map((m) => {
+  if (!db) return MOTIVE;
+  const code = MOTIVE.filter((m) => istAktiv(m.slug, db)).map((m) => {
     const ov = db.motive.get(m.slug);
     return ov
       ? { ...m, name: ov.name ?? m.name, untertitel: ov.untertitel ?? m.untertitel, intro: ov.intro ?? m.intro, bestseller: ov.bestseller ?? m.bestseller }
       : m;
   });
+  const eigene: Motiv[] = db.eigene.filter((m) => m.aktiv).map((m) => ({
+    slug: m.slug, name: m.name, untertitel: m.untertitel, intro: m.intro,
+    format: m.format, kategorien: m.kategorien, bestseller: m.bestseller,
+  }));
+  return [...eigene, ...code];
 }
 
 export async function ladeProdukteInKategorie(katSlug: string): Promise<Produkt[]> {
