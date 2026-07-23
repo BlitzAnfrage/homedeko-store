@@ -25,12 +25,12 @@ export async function POST(req: Request) {
     try {
       const kunde = m.kunde ? JSON.parse(m.kunde) : {};
       const items = (m.items ? JSON.parse(m.items) : []) as BestellItem[];
+      const addonIds = m.addonIds ? JSON.parse(m.addonIds) : [];
       if (items.length && kunde.email) {
         await bestellungAnlegen({
-          kunde, items,
-          summe: Number(m.summe) || 0,
-          versand: Number(m.versand) || 0,
+          kunde, items, summe: 0, versand: 0,
           rabattCode: m.rabattCode || null,
+          addonIds,
           zahlart: "stripe",
           bezahlt: true,
         });

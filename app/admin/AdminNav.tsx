@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/admin/preise", label: "Preise & Größen", icon: "tag" },
   { href: "/admin/rabatte", label: "Rabattcodes", icon: "ticket" },
   { href: "/admin/motive", label: "Motive & Produkte", icon: "image" },
+  { href: "/admin/upsells", label: "Upsells & Rabatte", icon: "plus" },
   { href: "/admin/bestellungen", label: "Bestellungen", icon: "box" },
   { href: "/admin/einstellungen", label: "Einstellungen", icon: "gear" },
 ];
@@ -19,6 +20,7 @@ function Icon({ name }: { name: string }) {
     ticket: "M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 0 0 4v3a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3a2 2 0 0 0 0-4z",
     image: "M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm3 3.5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0zM5 19l5-6 3 4 3-3 4 5z",
     box: "M21 8V21H3V8M1 3h22v5H1zM10 12h4",
+    plus: "M12 5v14M5 12h14",
     gear: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z",
   };
   return (

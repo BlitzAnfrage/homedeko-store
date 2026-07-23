@@ -26,7 +26,11 @@ export default function KasseForm({ stripeAktiv }: { stripeAktiv: boolean }) {
       const res = await fetch("/api/bestellung", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kunde, items: cart.items, summe: cart.summe, versand: cart.versand, gesamt: cart.gesamt, rabattCode: cart.rabatt?.code ?? null }),
+        body: JSON.stringify({
+          kunde, items: cart.items, summe: cart.summe, versand: cart.versand, gesamt: cart.gesamt,
+          rabattCode: cart.rabatt?.code ?? null,
+          addonIds: cart.gewaehlteAddons.map((a) => a.id),
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.fehler ?? "Unbekannter Fehler");
@@ -130,9 +134,15 @@ export default function KasseForm({ stripeAktiv }: { stripeAktiv: boolean }) {
           </ul>
           <dl className="space-y-1.5 text-[14px] border-t border-line pt-3">
             <div className="flex justify-between"><dt className="text-muted">Zwischensumme</dt><dd>{euro(cart.summe)}</dd></div>
+            {cart.mengenrabattBetrag > 0 && (
+              <div className="flex justify-between text-ok"><dt>Mengenrabatt ({cart.mengenrabattProzent}%)</dt><dd>−{euro(cart.mengenrabattBetrag)}</dd></div>
+            )}
             {cart.rabatt && cart.rabattBetrag > 0 && (
               <div className="flex justify-between text-ok"><dt>Rabatt „{cart.rabatt.code}“</dt><dd>−{euro(cart.rabattBetrag)}</dd></div>
             )}
+            {cart.gewaehlteAddons.map((a) => (
+              <div key={a.id} className="flex justify-between"><dt className="text-muted">{a.titel}</dt><dd>+{euro(a.preis)}</dd></div>
+            ))}
             <div className="flex justify-between"><dt className="text-muted">Versand</dt><dd>{cart.versand === 0 ? "kostenlos" : euro(cart.versand)}</dd></div>
             <div className="flex justify-between font-bold text-[15.5px] pt-1"><dt>Gesamt</dt><dd>{euro(cart.gesamt)}</dd></div>
           </dl>

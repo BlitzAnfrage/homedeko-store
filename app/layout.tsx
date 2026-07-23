@@ -4,6 +4,7 @@ import "./globals.css";
 import { CartProvider } from "@/lib/cart";
 import ShopChrome from "@/components/ShopChrome";
 import { ladeSettings } from "@/lib/settings";
+import { ladeAktiveAddons } from "@/lib/addons";
 import { hatStripe } from "@/lib/zahlung";
 import { SITE } from "@/lib/site";
 
@@ -38,11 +39,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await ladeSettings();
+  const [settings, addons] = await Promise.all([ladeSettings(), ladeAktiveAddons()]);
   return (
     <html lang="de">
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
-        <CartProvider versandFreiAb={settings.versand.frei_ab} versandKosten={settings.versand.kosten}>
+        <CartProvider
+          versandFreiAb={settings.versand.frei_ab}
+          versandKosten={settings.versand.kosten}
+          addons={addons.map((a) => ({ id: a.id, titel: a.titel, beschreibung: a.beschreibung, preis: Number(a.preis), vorausgewaehlt: a.vorausgewaehlt }))}
+          mengenrabatt={settings.mengenrabatt}
+        >
           <ShopChrome
             banner={settings.texte.banner}
             firmaName={settings.firma.name}

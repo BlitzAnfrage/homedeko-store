@@ -21,12 +21,17 @@ export type ZahlungSettings = {
   /* Bankverbindung für Vorkasse — wird dem Kunden nach Bestellung angezeigt. */
   bank_inhaber: string; bank_iban: string; bank_bic: string; bank_name: string;
 };
+export type MengenrabattStufe = { ab: number; prozent: number };
+export type MengenrabattSettings = {
+  aktiv: boolean; nur_leinwand: boolean; stufen: MengenrabattStufe[];
+};
 export type ShopSettings = {
   versand: VersandSettings;
   firma: FirmaSettings;
   texte: TexteSettings;
   rechtstexte: RechtstexteSettings;
   zahlung: ZahlungSettings;
+  mengenrabatt: MengenrabattSettings;
 };
 
 /* Code-Defaults — greifen, wenn die DB nichts liefert. */
@@ -48,6 +53,7 @@ export const DEFAULT_SETTINGS: ShopSettings = {
   },
   rechtstexte: { impressum: "", datenschutz: "", agb: "", widerruf: "" },
   zahlung: { bank_inhaber: "", bank_iban: "", bank_bic: "", bank_name: "" },
+  mengenrabatt: { aktiv: false, nur_leinwand: false, stufen: [{ ab: 2, prozent: 20 }, { ab: 3, prozent: 30 }] },
 };
 
 /* Lädt alle Einstellungen und merged sie über die Defaults (fehlende Keys
@@ -65,6 +71,7 @@ export async function ladeSettings(): Promise<ShopSettings> {
       texte: { ...DEFAULT_SETTINGS.texte, ...(map.get("texte") as object ?? {}) },
       rechtstexte: { ...DEFAULT_SETTINGS.rechtstexte, ...(map.get("rechtstexte") as object ?? {}) },
       zahlung: { ...DEFAULT_SETTINGS.zahlung, ...(map.get("zahlung") as object ?? {}) },
+      mengenrabatt: { ...DEFAULT_SETTINGS.mengenrabatt, ...(map.get("mengenrabatt") as object ?? {}) },
     };
   } catch {
     return DEFAULT_SETTINGS;

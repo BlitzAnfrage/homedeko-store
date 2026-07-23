@@ -4,7 +4,7 @@ import { supabaseServer } from "@/lib/supabase";
 
 /* Speichert eine Einstellungs-Gruppe. Body: { key, wert }
    key ∈ versand | firma | texte | rechtstexte */
-const ERLAUBT = ["versand", "firma", "texte", "rechtstexte", "zahlung"];
+const ERLAUBT = ["versand", "firma", "texte", "rechtstexte", "zahlung", "mengenrabatt"];
 
 export async function PUT(req: Request) {
   const sb = supabaseServer();

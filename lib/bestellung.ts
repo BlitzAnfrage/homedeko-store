@@ -5,6 +5,7 @@ import "server-only";
 import { supabaseServer } from "./supabase";
 import { resendClient, mailAbsender } from "./zahlung";
 import { ladeSettings } from "./settings";
+import { mengenrabattProzent, type Addon } from "./addons";
 
 export type BestellItem = { produktId: string; name: string; variante: string; preis: number; menge: number; bild?: string };
 export type BestellKunde = Record<string, string>;
@@ -14,58 +15,100 @@ export type BestellEingang = {
   summe: number;
   versand: number;
   rabattCode?: string | null;
+  addonIds?: string[];
   zahlart: "vorkasse" | "stripe";
   bezahlt?: boolean;
 };
 
-const euro = (n: number) => (n ?? 0).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
-
-/* Rabatt serverseitig prüfen + Betrag berechnen (nie dem Client vertrauen). */
-async function pruefeRabatt(code: string, summe: number) {
+/* Serverseitige Berechnung aller Beträge — nie den Client-Werten vertrauen.
+   Reihenfolge: Mengenrabatt → Gutschein → + Add-ons → + Versand. */
+export async function berechneBetraege(items: BestellItem[], rabattCode: string | null, addonIds: string[]) {
   const sb = supabaseServer();
-  if (!sb || !code) return { code: null as string | null, betrag: 0, rcId: null as string | null };
-  const { data: rc } = await sb.from("rabattcodes").select("*").eq("code", code.toUpperCase()).maybeSingle();
-  if (!rc || !rc.aktiv || summe < Number(rc.mindestwert || 0)) return { code: null, betrag: 0, rcId: null };
-  if (rc.gueltig_bis && new Date(rc.gueltig_bis) < new Date()) return { code: null, betrag: 0, rcId: null };
-  if (rc.max_nutzungen != null && rc.genutzt >= rc.max_nutzungen) return { code: null, betrag: 0, rcId: null };
-  const betrag = rc.typ === "prozent"
-    ? Math.round(summe * (Number(rc.wert) / 100) * 100) / 100
-    : Math.min(summe, Number(rc.wert));
-  return { code: rc.code as string, betrag, rcId: rc.id as string };
+  const settings = await ladeSettings();
+  const summe = items.reduce((s, i) => s + i.preis * i.menge, 0);
+
+  // Mengenrabatt
+  const mr = settings.mengenrabatt;
+  const zaehlt = (it: BestellItem) => !mr.nur_leinwand || /leinwand/i.test(it.variante) || /leinwand/i.test(it.produktId);
+  const bilder = items.filter(zaehlt).reduce((s, i) => s + i.menge, 0);
+  const mrProzent = mengenrabattProzent(bilder, mr);
+  const mrBasis = items.filter(zaehlt).reduce((s, i) => s + i.preis * i.menge, 0);
+  const mengenrabattBetrag = Math.round(mrBasis * (mrProzent / 100) * 100) / 100;
+  const warenNachMR = Math.max(0, summe - mengenrabattBetrag);
+
+  // Gutschein-Code (auf Warenwert nach Mengenrabatt)
+  let rabatt = { code: null as string | null, betrag: 0, rcId: null as string | null };
+  if (sb && rabattCode) {
+    const { data: rc } = await sb.from("rabattcodes").select("*").eq("code", rabattCode.toUpperCase()).maybeSingle();
+    if (rc && rc.aktiv && warenNachMR >= Number(rc.mindestwert || 0)
+        && (!rc.gueltig_bis || new Date(rc.gueltig_bis) >= new Date())
+        && (rc.max_nutzungen == null || rc.genutzt < rc.max_nutzungen)) {
+      const betrag = rc.typ === "prozent" ? Math.round(warenNachMR * (Number(rc.wert) / 100) * 100) / 100 : Math.min(warenNachMR, Number(rc.wert));
+      rabatt = { code: rc.code, betrag, rcId: rc.id };
+    }
+  }
+
+  // Add-ons (nur echte, aktive)
+  let addons: Addon[] = [];
+  if (sb && addonIds?.length) {
+    const { data } = await sb.from("addons").select("*").in("id", addonIds).eq("aktiv", true);
+    addons = (data as Addon[]) ?? [];
+  }
+  const addonSumme = addons.reduce((s, a) => s + Number(a.preis || 0), 0);
+
+  // Versand auf Warenwert nach Mengenrabatt
+  const versand = summe > 0 ? (warenNachMR >= settings.versand.frei_ab ? 0 : settings.versand.kosten) : 0;
+
+  const gesamt = Math.max(0, warenNachMR - rabatt.betrag) + addonSumme + versand;
+  return { summe, mengenrabattProzent: mrProzent, mengenrabattBetrag, rabatt, addons, addonSumme, versand, gesamt };
 }
 
-/** Speichert die Bestellung, erhöht Rabatt-Zähler, verschickt Mails. */
+const euro = (n: number) => (n ?? 0).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+
+/** Speichert die Bestellung, erhöht Rabatt-Zähler, verschickt Mails.
+    Alle Beträge werden serverseitig neu berechnet (berechneBetraege). */
 export async function bestellungAnlegen(e: BestellEingang): Promise<{ ok: boolean; nummer?: string; gesamt?: number; fehler?: string }> {
   const sb = supabaseServer();
   if (!sb) return { ok: false, fehler: "Speicher nicht verfügbar." };
 
-  const summe = Number(e.summe) || 0;
-  const versand = Number(e.versand) || 0;
-  const rab = await pruefeRabatt(e.rabattCode || "", summe);
-  const gesamt = Math.max(0, summe - rab.betrag) + versand;
+  const b = await berechneBetraege(e.items, e.rabattCode || null, e.addonIds || []);
   const nummer = "HD-" + Date.now().toString(36).toUpperCase();
-
   const status = e.bezahlt ? "bezahlt" : "neu";
+
+  // Add-ons als zusätzliche Positionen speichern (damit sie in der Bestellung sichtbar sind)
+  const addonItems = b.addons.map((a) => ({ produktId: `addon-${a.id}`, name: a.titel, variante: "Extra", preis: Number(a.preis), menge: 1 }));
+  // Mengenrabatt + Gutschein zusammen im rabatt_betrag (Anzeige-Felder)
+  const rabattGesamt = b.mengenrabattBetrag + b.rabatt.betrag;
+  const rabattLabel = [b.mengenrabattBetrag > 0 ? `Menge ${b.mengenrabattProzent}%` : "", b.rabatt.code].filter(Boolean).join(" + ") || null;
+
   const { error } = await sb.from("bestellungen").insert({
     nummer, status,
-    kunde: e.kunde, items: e.items,
-    summe, versand, rabatt_code: rab.code, rabatt_betrag: rab.betrag, gesamt,
+    kunde: e.kunde, items: [...e.items, ...addonItems],
+    summe: b.summe, versand: b.versand,
+    rabatt_code: rabattLabel, rabatt_betrag: rabattGesamt, gesamt: b.gesamt,
   });
   if (error) return { ok: false, fehler: error.message };
 
-  if (rab.rcId) {
-    const { data: rc } = await sb.from("rabattcodes").select("genutzt").eq("id", rab.rcId).maybeSingle();
-    if (rc) await sb.from("rabattcodes").update({ genutzt: Number(rc.genutzt) + 1 }).eq("id", rab.rcId);
+  if (b.rabatt.rcId) {
+    const { data: rc } = await sb.from("rabattcodes").select("genutzt").eq("id", b.rabatt.rcId).maybeSingle();
+    if (rc) await sb.from("rabattcodes").update({ genutzt: Number(rc.genutzt) + 1 }).eq("id", b.rabatt.rcId);
   }
 
-  await sendeMails({ nummer, kunde: e.kunde, items: e.items, summe, versand, rabattBetrag: rab.betrag, rabattCode: rab.code, gesamt, zahlart: e.zahlart, bezahlt: !!e.bezahlt });
+  await sendeMails({
+    nummer, kunde: e.kunde, items: e.items,
+    summe: b.summe, versand: b.versand,
+    mengenrabattProzent: b.mengenrabattProzent, mengenrabattBetrag: b.mengenrabattBetrag,
+    rabattBetrag: b.rabatt.betrag, rabattCode: b.rabatt.code,
+    addons: b.addons, gesamt: b.gesamt, zahlart: e.zahlart, bezahlt: !!e.bezahlt,
+  });
 
-  return { ok: true, nummer, gesamt };
+  return { ok: true, nummer, gesamt: b.gesamt };
 }
 
 type MailDaten = {
   nummer: string; kunde: BestellKunde; items: BestellItem[];
   summe: number; versand: number; rabattBetrag: number; rabattCode: string | null;
+  mengenrabattProzent: number; mengenrabattBetrag: number; addons: Addon[];
   gesamt: number; zahlart: string; bezahlt: boolean;
 };
 
@@ -99,7 +142,9 @@ async function sendeMails(d: MailDaten) {
       <table style="width:100%;border-collapse:collapse;border-top:1px solid #eee;margin-top:8px">${artikel}</table>
       <table style="width:100%;border-top:1px solid #eee;margin-top:8px;font-size:14px">
         <tr><td style="padding:3px 0;color:#888">Zwischensumme</td><td style="text-align:right">${euro(d.summe)}</td></tr>
+        ${d.mengenrabattBetrag > 0 ? `<tr><td style="padding:3px 0;color:#2e7d43">Mengenrabatt (${d.mengenrabattProzent}%)</td><td style="text-align:right;color:#2e7d43">−${euro(d.mengenrabattBetrag)}</td></tr>` : ""}
         ${d.rabattBetrag > 0 ? `<tr><td style="padding:3px 0;color:#2e7d43">Rabatt ${d.rabattCode ?? ""}</td><td style="text-align:right;color:#2e7d43">−${euro(d.rabattBetrag)}</td></tr>` : ""}
+        ${d.addons.map((a) => `<tr><td style="padding:3px 0;color:#888">${a.titel}</td><td style="text-align:right">+${euro(Number(a.preis))}</td></tr>`).join("")}
         <tr><td style="padding:3px 0;color:#888">Versand</td><td style="text-align:right">${d.versand === 0 ? "kostenlos" : euro(d.versand)}</td></tr>
         <tr><td style="padding:6px 0;font-weight:bold;font-size:16px">Gesamt</td><td style="text-align:right;font-weight:bold;font-size:16px">${euro(d.gesamt)}</td></tr>
       </table>

@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { bestellungAnlegen, type BestellItem } from "@/lib/bestellung";
+import { bestellungAnlegen, berechneBetraege, type BestellItem } from "@/lib/bestellung";
 import { hatStripe, stripeClient, basisUrl } from "@/lib/zahlung";
 
 /* Checkout-Einstieg.
-   - Stripe konfiguriert → erstellt eine Stripe-Checkout-Session, gibt deren URL
-     zurück (Kunde wird dorthin geleitet, Bestellung entsteht erst im Webhook).
-   - Sonst (Vorkasse) → Bestellung sofort speichern + Bestätigungsmail mit
-     Bankdaten, Rückgabe der Bestellnummer. */
+   - Stripe konfiguriert → Stripe-Checkout-Session (Bestellung entsteht im Webhook).
+   - Sonst (Vorkasse) → Bestellung sofort speichern + Bestätigungsmail.
+   Alle Beträge (Mengenrabatt, Gutschein, Add-ons, Versand) werden serverseitig
+   über berechneBetraege bestimmt — dem Client wird nichts geglaubt. */
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -15,39 +15,32 @@ export async function POST(req: Request) {
     }
     const items = body.items as BestellItem[];
     const kunde = body.kunde as Record<string, string>;
-    const summe = Number(body.summe) || 0;
-    const versand = Number(body.versand) || 0;
     const rabattCode = body.rabattCode ?? null;
+    const addonIds = Array.isArray(body.addonIds) ? body.addonIds : [];
 
     // ── Stripe-Weg ──────────────────────────────────────────────
     const stripe = stripeClient();
     if (hatStripe() && stripe) {
-      // Rabatt als negativer „Coupon" ist komplex — wir bilden den Rabatt als
-      // anteilige Reduktion je Position ab, indem wir eine Rabatt-Zeile ergänzen.
+      const b = await berechneBetraege(items, rabattCode, addonIds);
+
       const line_items = items.map((i) => ({
         quantity: i.menge,
-        price_data: {
-          currency: "eur",
-          unit_amount: Math.round(i.preis * 100),
-          product_data: { name: `${i.name} — ${i.variante}` },
-        },
+        price_data: { currency: "eur", unit_amount: Math.round(i.preis * 100), product_data: { name: `${i.name} — ${i.variante}` } },
       }));
-      if (versand > 0) {
-        line_items.push({
-          quantity: 1,
-          price_data: { currency: "eur", unit_amount: Math.round(versand * 100), product_data: { name: "Versand" } },
-        });
+      // Add-ons als eigene Positionen
+      for (const a of b.addons) {
+        line_items.push({ quantity: 1, price_data: { currency: "eur", unit_amount: Math.round(Number(a.preis) * 100), product_data: { name: a.titel } } });
+      }
+      if (b.versand > 0) {
+        line_items.push({ quantity: 1, price_data: { currency: "eur", unit_amount: Math.round(b.versand * 100), product_data: { name: "Versand" } } });
       }
 
-      // Rabatt via Stripe-Coupon (einmalig, amount_off)
+      // Mengenrabatt + Gutschein als EIN Coupon (amount_off)
       let discounts: { coupon: string }[] | undefined;
-      if (rabattCode) {
-        const { pruefeRabattBetrag } = await import("@/lib/rabatt-pruefung");
-        const betrag = await pruefeRabattBetrag(rabattCode, summe);
-        if (betrag > 0) {
-          const coupon = await stripe.coupons.create({ amount_off: Math.round(betrag * 100), currency: "eur", duration: "once", name: `Rabatt ${rabattCode}` });
-          discounts = [{ coupon: coupon.id }];
-        }
+      const rabattGesamt = b.mengenrabattBetrag + b.rabatt.betrag;
+      if (rabattGesamt > 0) {
+        const coupon = await stripe.coupons.create({ amount_off: Math.round(rabattGesamt * 100), currency: "eur", duration: "once", name: "Rabatt" });
+        discounts = [{ coupon: coupon.id }];
       }
 
       const session = await stripe.checkout.sessions.create({
@@ -58,33 +51,18 @@ export async function POST(req: Request) {
         success_url: `${basisUrl()}/danke?sid={CHECKOUT_SESSION_ID}`,
         cancel_url: `${basisUrl()}/kasse`,
         metadata: {
-          // Bestell-Nutzdaten kompakt für den Webhook (Stripe-Limit 500 Zeichen/Wert)
-          kunde: JSON.stringify(kunde).slice(0, 500),
-          rabattCode: rabattCode ?? "",
-          summe: String(summe),
-          versand: String(versand),
-        },
-        // vollständige Items separat, da metadata-Werte begrenzt sind
-        payment_intent_data: { metadata: { items: JSON.stringify(items).slice(0, 500) } },
-      });
-
-      // Items + kunde vollständig zwischenspeichern (metadata reicht nicht) →
-      // wir hängen sie an die Session-Metadata über ein separates Feld an.
-      await stripe.checkout.sessions.update(session.id, {
-        metadata: {
           kunde: JSON.stringify(kunde),
           items: JSON.stringify(items),
           rabattCode: rabattCode ?? "",
-          summe: String(summe),
-          versand: String(versand),
+          addonIds: JSON.stringify(addonIds),
         },
-      }).catch(() => {});
+      });
 
       return NextResponse.json({ ok: true, stripeUrl: session.url });
     }
 
     // ── Vorkasse-Weg ────────────────────────────────────────────
-    const res = await bestellungAnlegen({ kunde, items, summe, versand, rabattCode, zahlart: "vorkasse", bezahlt: false });
+    const res = await bestellungAnlegen({ kunde, items, summe: 0, versand: 0, rabattCode, addonIds, zahlart: "vorkasse", bezahlt: false });
     if (!res.ok) return NextResponse.json({ fehler: res.fehler }, { status: 500 });
     return NextResponse.json({ ok: true, nummer: res.nummer, gesamt: res.gesamt });
   } catch (err) {
