@@ -9,6 +9,7 @@ type MotivItem = {
   slug: string; name: string | null; untertitel: string | null; intro: string | null;
   bestseller: boolean | null; aktiv: boolean; kategorien: string[] | null;
   eigen: boolean; format: string; bild: string | null; dbBilder: DBBild[]; ausnahmen: string[];
+  ausnahmeGroessen: Record<string, Groesse[]>; variantenAus: string[];
 };
 type Props = {
   motive: MotivItem[];
@@ -71,24 +72,40 @@ function BilderTab({ slug, bilder, onChange }: { slug: string; bilder: DBBild[];
   );
 }
 
-/* ── Preis-Ausnahme eines Produkts (Motiv+Art) ────────────────────────── */
+/* ── Varianten & Preise eines Motivs ──────────────────────────────────── */
 function PreiseTab({ motiv, produktarten, vorlagen, onChange }: {
   motiv: MotivItem; produktarten: Props["produktarten"]; vorlagen: Props["vorlagen"]; onChange: () => void;
 }) {
+  const arten = produktarten.filter((pa) => pa.art !== "poster");
   const [art, setArt] = useState("leinwand");
-  const key = `${art}::${motiv.format || "quadrat"}`;
-  const [zeilen, setZeilen] = useState<Groesse[]>(() => vorlagen[key] ?? []);
-  const [status, setStatus] = useState<"" | "ok" | "busy">("");
+  const format = motiv.format || "quadrat";
   const hatAusnahme = motiv.ausnahmen.includes(art);
+  const varianteAus = motiv.variantenAus.includes(art);
+
+  // Startzeilen: vorhandene Ausnahme > Standard-Vorlage
+  const startZeilen = () => motiv.ausnahmeGroessen[art] ?? vorlagen[`${art}::${format}`] ?? [];
+  const [zeilen, setZeilen] = useState<Groesse[]>(startZeilen);
+  const [status, setStatus] = useState<"" | "ok" | "busy">("");
 
   const artWechsel = (a: string) => {
-    setArt(a);
-    setZeilen(vorlagen[`${a}::${motiv.format || "quadrat"}`] ?? []);
-    setStatus("");
+    setArt(a); setStatus("");
+    setZeilen(motiv.ausnahmeGroessen[a] ?? vorlagen[`${a}::${format}`] ?? []);
   };
-  const setPreis = (i: number, v: string) =>
-    setZeilen((z) => z.map((g, idx) => idx === i ? { ...g, preis: Number(v) || 0 } : g));
 
+  const setFeld = (i: number, feld: keyof Groesse, v: string | boolean) =>
+    setZeilen((z) => z.map((g, idx) => idx === i ? { ...g, [feld]: v } : g));
+  const beliebtSetzen = (i: number) =>
+    setZeilen((z) => z.map((g, idx) => ({ ...g, beliebt: idx === i ? !g.beliebt : false })));
+  const zeileWeg = (i: number) => setZeilen((z) => z.filter((_, idx) => idx !== i));
+  const zeileNeu = () => setZeilen((z) => [...z, { label: "", b: undefined, h: undefined, preis: 0 }]);
+
+  const varianteToggle = async () => {
+    await fetch("/api/admin/variante", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ motivSlug: motiv.slug, art, aus: !varianteAus }),
+    });
+    onChange();
+  };
   const speichern = async () => {
     setStatus("busy");
     await fetch("/api/admin/preis-override", {
@@ -104,44 +121,78 @@ function PreiseTab({ motiv, produktarten, vorlagen, onChange }: {
 
   return (
     <div>
+      {/* Varianten-Umschalter */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
-        {produktarten.filter((pa) => pa.art !== "poster").map((pa) => (
-          <button key={pa.art} onClick={() => artWechsel(pa.art)}
-            className={`text-[12.5px] font-medium rounded-full px-3 py-1.5 border transition-colors relative ${art === pa.art ? "bg-ink-strong text-white border-ink-strong" : "bg-white border-[#e0ddd6] text-muted hover:border-[#cfc9bf]"}`}>
-            {pa.name}
-            {motiv.ausnahmen.includes(pa.art) && <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-gold" title="Ausnahme aktiv" />}
-          </button>
-        ))}
+        {arten.map((pa) => {
+          const aus = motiv.variantenAus.includes(pa.art);
+          return (
+            <button key={pa.art} onClick={() => artWechsel(pa.art)}
+              className={`text-[12.5px] font-medium rounded-full px-3 py-1.5 border transition-colors relative ${art === pa.art ? "bg-ink-strong text-white border-ink-strong" : `bg-white border-[#e0ddd6] hover:border-[#cfc9bf] ${aus ? "text-[#c0392b] line-through" : "text-muted"}`}`}>
+              {pa.name}
+              {motiv.ausnahmen.includes(pa.art) && !aus && <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-gold" title="Eigener Preis" />}
+            </button>
+          );
+        })}
       </div>
-      <p className="text-[12.5px] text-muted mb-3">
-        {hatAusnahme
-          ? "Für dieses Produkt gilt ein eigener Preis (Ausnahme). Ändere ihn hier oder setz ihn zurück auf den Standard."
-          : "Standard: zentraler Preis aus „Preise & Größen“. Trag hier einen eigenen Preis ein, um NUR für dieses Motiv abzuweichen."}
-      </p>
-      <div className="space-y-1.5">
-        {zeilen.map((g, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <span className="flex-1 text-[13.5px] text-ink">{g.label}</span>
-            <div className="flex items-center gap-1.5">
-              <input value={g.preis} onChange={(e) => setPreis(i, e.target.value)} inputMode="decimal"
-                className="w-20 rounded-md border border-[#dcd8d0] px-2.5 py-1.5 text-[13.5px] font-semibold text-right outline-none focus:border-bordeaux" />
-              <span className="text-[13px] text-muted">€</span>
+
+      {/* An/Aus-Schalter für diese Variante */}
+      <div className={`flex items-center justify-between gap-3 rounded-lg border px-3.5 py-2.5 mb-3 ${varianteAus ? "border-[#e8c9c4] bg-[#fbf1ef]" : "border-ok/30 bg-ok-soft"}`}>
+        <span className="text-[13px] font-medium">
+          {varianteAus
+            ? <span className="text-[#c0392b]">Diese Variante ist im Shop <b>ausgeschaltet</b> — nicht kaufbar.</span>
+            : <span className="text-ok">Diese Variante ist im Shop <b>verfügbar</b>.</span>}
+        </span>
+        <button onClick={varianteToggle}
+          className={`shrink-0 relative h-6 w-11 rounded-full transition-colors ${varianteAus ? "bg-[#d5d0c6]" : "bg-ok"}`}
+          aria-label="Variante an/aus">
+          <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${varianteAus ? "left-0.5" : "left-[22px]"}`} />
+        </button>
+      </div>
+
+      {/* Größen-Editor (nur wenn Variante an) */}
+      {!varianteAus && (
+        <>
+          <p className="text-[12.5px] text-muted mb-2">
+            {hatAusnahme
+              ? "Eigene Größen & Preise für dieses Produkt (weicht von „Preise & Größen“ ab)."
+              : "Standard: Größen/Preise aus „Preise & Größen“. Bearbeite hier, um NUR für dieses Motiv abzuweichen — Größen hinzufügen, umbenennen, löschen."}
+          </p>
+          <div className="hidden sm:grid grid-cols-[1fr_60px_60px_80px_54px_32px] gap-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-muted px-1 mb-1">
+            <span>Bezeichnung</span><span>Breite</span><span>Höhe</span><span>Preis €</span><span>Top</span><span></span>
+          </div>
+          <div className="space-y-1.5">
+            {zeilen.map((g, i) => (
+              <div key={i} className="grid grid-cols-2 sm:grid-cols-[1fr_60px_60px_80px_54px_32px] gap-1.5 items-center">
+                <input value={g.label} onChange={(e) => setFeld(i, "label", e.target.value)} placeholder="z.B. 80 × 80 cm"
+                  className="col-span-2 sm:col-span-1 rounded-md border border-[#dcd8d0] px-2.5 py-1.5 text-[13.5px] outline-none focus:border-bordeaux" />
+                <input value={g.b ?? ""} onChange={(e) => setFeld(i, "b", e.target.value)} placeholder="cm" inputMode="numeric"
+                  className="rounded-md border border-[#dcd8d0] px-2 py-1.5 text-[13.5px] outline-none focus:border-bordeaux" />
+                <input value={g.h ?? ""} onChange={(e) => setFeld(i, "h", e.target.value)} placeholder="cm" inputMode="numeric"
+                  className="rounded-md border border-[#dcd8d0] px-2 py-1.5 text-[13.5px] outline-none focus:border-bordeaux" />
+                <input value={g.preis} onChange={(e) => setFeld(i, "preis", e.target.value)} inputMode="decimal"
+                  className="rounded-md border border-[#dcd8d0] px-2 py-1.5 text-[13.5px] font-semibold outline-none focus:border-bordeaux" />
+                <button onClick={() => beliebtSetzen(i)} title="Beliebteste Größe"
+                  className={`h-8 rounded-md border text-[13px] ${g.beliebt ? "bg-gold text-white border-gold" : "border-[#dcd8d0] text-muted hover:border-gold"}`}>{g.beliebt ? "★" : "☆"}</button>
+                <button onClick={() => zeileWeg(i)} aria-label="Größe löschen"
+                  className="h-8 w-8 flex items-center justify-center rounded-md text-muted hover:text-bordeaux hover:bg-bordeaux-soft">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14" /></svg>
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center justify-between gap-3 mt-3">
+            <button onClick={zeileNeu} className="text-[12.5px] font-semibold text-bordeaux hover:underline">+ Größe hinzufügen</button>
+            <div className="flex items-center gap-3">
+              {hatAusnahme && <button onClick={zuruecksetzen} className="text-[12px] font-medium text-muted hover:text-bordeaux">Zurück zum Standard</button>}
+              {status === "ok" && <span className="text-[12.5px] font-medium text-ok">✓ Gespeichert</span>}
+              <button onClick={speichern} disabled={status === "busy"}
+                className="rounded-md bg-ink-strong text-white font-semibold px-4 py-1.5 text-[13px] disabled:opacity-50">
+                {status === "busy" ? "Speichert …" : "Größen & Preise speichern"}
+              </button>
             </div>
           </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-between gap-3 mt-3">
-        {hatAusnahme
-          ? <button onClick={zuruecksetzen} className="text-[12.5px] font-semibold text-bordeaux hover:underline">Auf Standardpreis zurücksetzen</button>
-          : <span />}
-        <div className="flex items-center gap-3">
-          {status === "ok" && <span className="text-[12.5px] font-medium text-ok">✓ Gespeichert</span>}
-          <button onClick={speichern} disabled={status === "busy"}
-            className="rounded-md bg-ink-strong text-white font-semibold px-4 py-1.5 text-[13px] disabled:opacity-50">
-            {status === "busy" ? "Speichert …" : "Eigenen Preis speichern"}
-          </button>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }
@@ -188,6 +239,7 @@ function MotivZeile({ m, kategorien, produktarten, vorlagen, onChange }: {
             {m.eigen && <span className="text-[10px] font-bold uppercase tracking-wide text-bordeaux bg-bordeaux-soft rounded px-1.5 py-0.5 shrink-0">Eigen</span>}
             {bestseller && <span className="text-[10px] font-bold uppercase tracking-wide text-gold-ink bg-gold-soft rounded px-1.5 py-0.5 shrink-0">Bestseller</span>}
             {m.ausnahmen.length > 0 && <span className="text-[10px] font-medium text-gold-ink shrink-0" title="Preis-Ausnahmen aktiv">★ {m.ausnahmen.length} Preis-Ausnahme{m.ausnahmen.length > 1 ? "n" : ""}</span>}
+            {m.variantenAus.length > 0 && <span className="text-[10px] font-medium text-[#c0392b] shrink-0" title="Ausgeschaltete Varianten">{m.variantenAus.length} Variante{m.variantenAus.length > 1 ? "n" : ""} aus</span>}
           </div>
           <div className="text-[12.5px] text-muted truncate">{untertitel}</div>
         </div>

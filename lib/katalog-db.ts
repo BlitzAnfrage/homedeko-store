@@ -47,6 +47,8 @@ type DBState = {
   bilder: Map<string, Ansicht[]>;
   /* Im Admin neu angelegte Motive (nicht im Code) */
   eigene: EigenesMotiv[];
+  /* ausgeschaltete Varianten als Set von "<slug>::<art>" */
+  variantenAus: Set<string>;
 };
 
 /* Standard-Staffel (Code-Werte) für ein neues Motiv, falls die DB-Staffel fehlt. */
@@ -94,12 +96,13 @@ async function ladeDBState(): Promise<DBState | null> {
   const sb = supabaseServer();
   if (!sb) return null;
   try {
-    const [staffelRes, motivRes, preisOvRes, bilderRes, eigeneRes] = await Promise.all([
+    const [staffelRes, motivRes, preisOvRes, bilderRes, eigeneRes, variantenRes] = await Promise.all([
       sb.from("preisstaffeln").select("id,groessen"),
       sb.from("motive_override").select("slug,name,untertitel,intro,bestseller,aktiv"),
       sb.from("preis_override").select("key,groessen"),
       sb.from("motiv_bilder").select("motiv_slug,url,typ,sortierung").order("sortierung"),
       sb.from("eigene_motive").select("*").order("erstellt", { ascending: false }),
+      sb.from("variante_aus").select("key"),
     ]);
     if (staffelRes.error || motivRes.error) return null;
 
@@ -123,8 +126,9 @@ async function ladeDBState(): Promise<DBState | null> {
     }
 
     const eigene: EigenesMotiv[] = (eigeneRes.data as EigenesMotiv[]) ?? [];
+    const variantenAus = new Set<string>((variantenRes.data ?? []).map((v) => v.key));
 
-    return { staffeln, motive, preisOverride, bilder, eigene };
+    return { staffeln, motive, preisOverride, bilder, eigene, variantenAus };
   } catch {
     return null;
   }
@@ -179,18 +183,24 @@ function istAktiv(slug: string, db: DBState | null): boolean {
   return ov ? ov.aktiv : true;
 }
 
+/* Ist eine konkrete Variante (Motiv+Art) ausgeschaltet? */
+function varianteAus(slug: string, art: string, db: DBState | null): boolean {
+  return db ? db.variantenAus.has(`${slug}::${art}`) : false;
+}
+
 /* ── Öffentliche async-API (spiegelt lib/katalog, aber DB-überlagert) ── */
 
 export async function ladeKatalog(): Promise<Produkt[]> {
   const db = await ladeDBState();
   if (!db) return PRODUKTE;
   const codeProdukte = PRODUKTE
-    .filter((p) => istAktiv(p.motiv.slug, db))
+    .filter((p) => istAktiv(p.motiv.slug, db) && !varianteAus(p.motiv.slug, p.art, db))
     .map((p) => ueberlagereProdukt(p, db));
-  // eigene, im Admin angelegte Motive dazu (nur aktive)
+  // eigene, im Admin angelegte Motive dazu (nur aktive, ohne ausgeschaltete Varianten)
   const eigeneProdukte = db.eigene
     .filter((m) => m.aktiv)
-    .flatMap((m) => baueEigeneProdukte(m, db));
+    .flatMap((m) => baueEigeneProdukte(m, db))
+    .filter((p) => !varianteAus(p.motiv.slug, p.art, db));
   return [...eigeneProdukte, ...codeProdukte];
 }
 
@@ -200,12 +210,15 @@ export async function ladeProduktById(id: string): Promise<Produkt | undefined> 
   // zuerst Code-Katalog
   const p = PRODUKTE.find((x) => x.id === id);
   if (p) {
-    if (db && !istAktiv(p.motiv.slug, db)) return undefined; // ausgeblendet = nicht kaufbar
+    // ausgeblendetes Motiv ODER ausgeschaltete Variante = nicht kaufbar
+    if (db && (!istAktiv(p.motiv.slug, db) || varianteAus(p.motiv.slug, p.art, db))) return undefined;
     return db ? ueberlagereProdukt(p, db) : p;
   }
   // sonst eigenes Motiv?
   if (db) {
-    const eigene = db.eigene.filter((m) => m.aktiv).flatMap((m) => baueEigeneProdukte(m, db));
+    const eigene = db.eigene.filter((m) => m.aktiv)
+      .flatMap((m) => baueEigeneProdukte(m, db))
+      .filter((x) => !varianteAus(x.motiv.slug, x.art, db));
     return eigene.find((x) => x.id === id);
   }
   return undefined;

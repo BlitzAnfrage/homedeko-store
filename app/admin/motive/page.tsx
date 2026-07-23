@@ -1,5 +1,5 @@
-import { ladeMotive, ladeMotivBilder, ladePreisOverrides, ladeEigeneMotive } from "@/lib/admin-data";
-import { motivBild, KATEGORIEN, PRODUKTARTEN } from "@/lib/katalog";
+import { ladeMotive, ladeMotivBilder, ladePreisOverrides, ladeEigeneMotive, ladeVariantenAus } from "@/lib/admin-data";
+import { motivBild, KATEGORIEN, PRODUKTARTEN, MOTIVE } from "@/lib/katalog";
 import { LEINWAND_QUADRAT, LEINWAND_QUER, POSTER_QUADRAT, POSTER_DINA, SET3_QUADRAT, SET3_PANORAMA, TAPETE, WALLPRINT } from "@/lib/preise";
 import MotiveVerwaltung from "./MotiveVerwaltung";
 
@@ -19,18 +19,27 @@ function standardGroessen(art: string, format: string) {
 }
 
 export default async function MotivePage() {
-  const [overrides, bilder, preisOv, eigene] = await Promise.all([
-    ladeMotive(), ladeMotivBilder(), ladePreisOverrides(), ladeEigeneMotive(),
+  const [overrides, bilder, preisOv, eigene, variantenAus] = await Promise.all([
+    ladeMotive(), ladeMotivBilder(), ladePreisOverrides(), ladeEigeneMotive(), ladeVariantenAus(),
   ]);
+  const ausSet = new Set(variantenAus);
+
+  // Preis-Ausnahmen je Motiv als {art: groessen[]} für den Editor
+  const ausnahmenVon = (slug: string) =>
+    Object.fromEntries(preisOv.filter((p) => p.motiv_slug === slug).map((p) => [p.art, p.groessen]));
+  const variantenAusVon = (slug: string) =>
+    ["leinwand", "set3", "tapete", "wallprint"].filter((art) => ausSet.has(`${slug}::${art}`));
 
   // Code-Motive mit Bild + zugehörigen DB-Bildern + Preis-Ausnahmen anreichern
   const codeMotive = overrides.map((m) => ({
     ...m,
     eigen: false,
-    format: "quadrat", // Code-Motive: Format kommt aus katalog.ts, hier nur Anzeige
+    format: MOTIVE.find((x) => x.slug === m.slug)?.format ?? "quadrat",
     bild: motivBild(m.slug)?.klein ?? null,
     dbBilder: bilder.filter((b) => b.motiv_slug === m.slug),
-    ausnahmen: preisOv.filter((p) => p.motiv_slug === m.slug).map((p) => p.art),
+    ausnahmen: Object.keys(ausnahmenVon(m.slug)),
+    ausnahmeGroessen: ausnahmenVon(m.slug),
+    variantenAus: variantenAusVon(m.slug),
   }));
 
   const eigeneMotive = eigene.map((m) => ({
@@ -39,7 +48,9 @@ export default async function MotivePage() {
     eigen: true, format: m.format,
     bild: bilder.find((b) => b.motiv_slug === m.slug)?.url ?? null,
     dbBilder: bilder.filter((b) => b.motiv_slug === m.slug),
-    ausnahmen: preisOv.filter((p) => p.motiv_slug === m.slug).map((p) => p.art),
+    ausnahmen: Object.keys(ausnahmenVon(m.slug)),
+    ausnahmeGroessen: ausnahmenVon(m.slug),
+    variantenAus: variantenAusVon(m.slug),
   }));
 
   // Vorlagen-Größen als Plain-Objekt an den Client geben

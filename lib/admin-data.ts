@@ -72,6 +72,14 @@ export async function ladeEigeneMotive(): Promise<EigenesMotiv[]> {
   return (data as EigenesMotiv[]) ?? [];
 }
 
+/* Ausgeschaltete Varianten als Liste von "<slug>::<art>". */
+export async function ladeVariantenAus(): Promise<string[]> {
+  const sb = supabaseServer();
+  if (!sb) return [];
+  const { data } = await sb.from("variante_aus").select("key");
+  return (data ?? []).map((r) => r.key);
+}
+
 /* Alle Shop-Einstellungen als key→wert-Map (für den Admin-Editor). */
 export async function ladeSettingsMap(): Promise<Record<string, unknown>> {
   const sb = supabaseServer();
