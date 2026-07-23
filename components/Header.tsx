@@ -15,9 +15,10 @@ const NAV = [
   { href: "/kategorie/wallprints", label: "Wallprints" },
 ];
 
-export default function Header() {
+export default function Header({ banner }: { banner?: string[] }) {
   const { anzahl } = useCart();
   const router = useRouter();
+  const vorteile = banner && banner.length ? banner : VORTEILE;
   const [vorteil, setVorteil] = useState(0);
   const [mega, setMega] = useState(false);
   const [mobil, setMobil] = useState(false);
@@ -25,9 +26,9 @@ export default function Header() {
   const megaTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const t = setInterval(() => setVorteil((v) => (v + 1) % VORTEILE.length), 3800);
+    const t = setInterval(() => setVorteil((v) => (v + 1) % vorteile.length), 3800);
     return () => clearInterval(t);
-  }, []);
+  }, [vorteile.length]);
 
   // Hintergrund-Scroll sperren (iOS-fest via position:fixed, Scroll-Position merken)
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function Header() {
         <div className="mx-auto max-w-7xl w-full flex items-center justify-center gap-4">
           <span key={vorteil} className="fade-in inline-flex items-center gap-1.5 tracking-wide whitespace-nowrap truncate">
             <span className="text-gold-bright shrink-0"><IconCheck size={14} /></span>
-            {VORTEILE[vorteil]}
+            {vorteile[vorteil]}
           </span>
           <span className="hidden lg:inline text-white/30">|</span>
           <Link href="/#bestseller" className="hidden lg:inline hover:underline whitespace-nowrap">

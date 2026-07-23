@@ -5,7 +5,11 @@ import { TRUST_ZEILE, ZAHLARTEN } from "@/lib/site";
 import PayLogos from "./PayLogos";
 import { IconCheck, IconLock } from "./Icon";
 
-export default function Footer() {
+export default function Footer({ firmaName, versandFreiAb = 60, versandKosten = 8 }: {
+  firmaName?: string; versandFreiAb?: number; versandKosten?: number;
+}) {
+  const name = firmaName || "Homedeko Store";
+  const jahr = 2026;
   return (
     <footer className="bg-ink-strong text-white/80 mt-20">
       <div className="brandlinie" />
@@ -59,7 +63,7 @@ export default function Footer() {
             <li><Link className="hover:text-white inline-block py-1.5" href="/impressum">Impressum</Link></li>
           </ul>
           <p className="mt-5 text-[12.5px] text-white/55">
-            Versandkostenfrei ab 60 € (Deutschland) — darunter pauschal 8 €.
+            Versandkostenfrei ab {versandFreiAb} € (Deutschland) — darunter pauschal {versandKosten} €.
           </p>
         </div>
       </div>
@@ -71,7 +75,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="border-t border-white/10 py-5 text-center text-[12.5px] text-white/50">
-        © 2026 Homedeko Store · Alle Preise inkl. MwSt.
+        © {jahr} {name} · Alle Preise inkl. MwSt.
       </div>
     </footer>
   );

@@ -72,6 +72,16 @@ export async function ladeEigeneMotive(): Promise<EigenesMotiv[]> {
   return (data as EigenesMotiv[]) ?? [];
 }
 
+/* Alle Shop-Einstellungen als key→wert-Map (für den Admin-Editor). */
+export async function ladeSettingsMap(): Promise<Record<string, unknown>> {
+  const sb = supabaseServer();
+  if (!sb) return {};
+  const { data } = await sb.from("shop_settings").select("key,wert");
+  const map: Record<string, unknown> = {};
+  for (const r of data ?? []) map[r.key] = r.wert;
+  return map;
+}
+
 export async function ladeBestellungen(limit = 100): Promise<Bestellung[]> {
   const sb = supabaseServer();
   if (!sb) return [];

@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart";
 import ShopChrome from "@/components/ShopChrome";
+import { ladeSettings } from "@/lib/settings";
 import { SITE } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -18,12 +19,25 @@ export const metadata: Metadata = {
   icons: { icon: "/logo.png" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/* Header-Banner + Footer-Firmendaten kommen aus der DB und sollen IMMER aktuell
+   sein → Layout bei jedem Request rendern. Die einzelnen Seiten bleiben davon
+   unberührt (die haben ihr eigenes ISR/SSG). */
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const settings = await ladeSettings();
   return (
     <html lang="de">
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
-        <CartProvider>
-          <ShopChrome>{children}</ShopChrome>
+        <CartProvider versandFreiAb={settings.versand.frei_ab} versandKosten={settings.versand.kosten}>
+          <ShopChrome
+            banner={settings.texte.banner}
+            firmaName={settings.firma.name}
+            versandFreiAb={settings.versand.frei_ab}
+            versandKosten={settings.versand.kosten}
+          >
+            {children}
+          </ShopChrome>
         </CartProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org", "@type": "WebSite",

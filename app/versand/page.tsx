@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
 import { IconCheck } from "@/components/Icon";
+import { ladeSettings } from "@/lib/settings";
 
 export const metadata: Metadata = {
   title: "Versand & Lieferung",
-  description: "Versandkostenfrei ab 60 € innerhalb Deutschlands — darunter pauschal 8 €. Alle Infos zu Versand und Lieferung im Homedeko Store.",
+  description: "Alle Infos zu Versand und Lieferung im Homedeko Store.",
   alternates: { canonical: "/versand" },
 };
 
-export default function VersandSeite() {
+export const revalidate = 60;
+
+export default async function VersandSeite() {
+  const { versand } = await ladeSettings();
   return (
     <div className="mx-auto max-w-3xl px-4 pt-8 pb-10">
       <h1 className="font-display text-4xl text-ink-strong mb-6">Versand & Lieferung</h1>
       <div className="card p-6 mb-6">
         <h2 className="font-semibold text-[16px] mb-3">Versandkosten (Deutschland)</h2>
         <ul className="space-y-2.5">
-          {["Ab 60 € Bestellwert: versandkostenfrei", "Unter 60 € Bestellwert: pauschal 8 €"].map((t) => (
+          {[`Ab ${versand.frei_ab} € Bestellwert: versandkostenfrei`, `Unter ${versand.frei_ab} € Bestellwert: pauschal ${versand.kosten} €`].map((t) => (
             <li key={t} className="flex items-start gap-2.5 text-[15px]">
               <span className="text-ok mt-0.5"><IconCheck size={17} /></span>{t}
             </li>

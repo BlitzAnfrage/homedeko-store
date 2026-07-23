@@ -1,7 +1,7 @@
 "use client";
 /* Warenkorb — React Context + localStorage (Muster aus der Shop-Blaupause) */
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { versandkosten } from "./preise";
+import { VERSAND_FREI_AB, VERSAND_KOSTEN } from "./preise";
 
 export type CartItem = {
   produktId: string;
@@ -34,7 +34,15 @@ const Ctx = createContext<CartCtx | null>(null);
 const KEY = "homedeko-warenkorb-v1";
 const RABATT_KEY = "homedeko-rabatt-v1";
 
-export function CartProvider({ children }: { children: React.ReactNode }) {
+export function CartProvider({
+  children,
+  versandFreiAb = VERSAND_FREI_AB,
+  versandKosten = VERSAND_KOSTEN,
+}: {
+  children: React.ReactNode;
+  versandFreiAb?: number;
+  versandKosten?: number;
+}) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [rabatt, setRabatt] = useState<Rabatt | null>(null);
   const [geladen, setGeladen] = useState(false);
@@ -80,7 +88,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [summe, geladen]);
 
   const api = useMemo<CartCtx>(() => {
-    const versand = items.length ? versandkosten(summe) : 0;
+    const versand = items.length ? (summe >= versandFreiAb ? 0 : versandKosten) : 0;
     const rabattBetrag = rabatt ? Math.min(rabatt.betrag, summe) : 0;
     return {
       items,
@@ -111,7 +119,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       gesamt: Math.max(0, summe - rabattBetrag) + versand,
       anzahl: items.reduce((s, i) => s + i.menge, 0),
     };
-  }, [items, summe, rabatt]);
+  }, [items, summe, rabatt, versandFreiAb, versandKosten]);
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
 }

@@ -5,8 +5,17 @@ import Footer from "./Footer";
 import Reveal from "./Reveal";
 
 /* Blendet den Shop-Rahmen (Header/Footer/Reveal) im Admin-Bereich aus —
-   /admin hat sein eigenes Layout. */
-export default function ShopChrome({ children }: { children: React.ReactNode }) {
+   /admin hat sein eigenes Layout. Banner/Firma/Versand kommen als Props vom
+   Server-Layout (das die Settings lädt). */
+export default function ShopChrome({
+  children, banner, firmaName, versandFreiAb, versandKosten,
+}: {
+  children: React.ReactNode;
+  banner?: string[];
+  firmaName?: string;
+  versandFreiAb?: number;
+  versandKosten?: number;
+}) {
   const path = usePathname();
   const istAdmin = path?.startsWith("/admin");
 
@@ -14,9 +23,9 @@ export default function ShopChrome({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <Header />
+      <Header banner={banner} />
       <main>{children}</main>
-      <Footer />
+      <Footer firmaName={firmaName} versandFreiAb={versandFreiAb} versandKosten={versandKosten} />
       <Reveal />
     </>
   );
