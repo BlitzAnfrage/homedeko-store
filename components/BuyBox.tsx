@@ -8,10 +8,15 @@ import type { Produkt } from "@/lib/katalog";
 import { IconCamera, IconCart, IconCheck, IconMinus, IconPlus, IconShield } from "./Icon";
 import ArVorschau from "./ArVorschau";
 import PayLogos from "./PayLogos";
+import BundleBox, { type BundleMotiv } from "./BundleBox";
 
 /* Kaufbox v2: jede Größe zeigt das Motiv maßstabsgetreu — als Mini-Vorschau in
    der Kachel und groß in der Live-Wandvorschau (echte Motivbilder, echte Proportionen). */
-export default function BuyBox({ p }: { p: Produkt }) {
+export default function BuyBox({ p, bundleMotive = [], bundleStufen = [] }: {
+  p: Produkt;
+  bundleMotive?: BundleMotiv[];
+  bundleStufen?: { ab: number; prozent: number }[];
+}) {
   const cart = useCart();
   const hatPoster = !!p.posterGroessen?.length;
   const [art, setArt] = useState<"haupt" | "poster">("haupt");
@@ -163,6 +168,15 @@ export default function BuyBox({ p }: { p: Produkt }) {
           <span className="flex items-center gap-2"><IconCheck size={17} /> Im Warenkorb!</span>
           <Link href="/warenkorb" className="underline font-semibold">Zur Kasse</Link>
         </div>
+      )}
+
+      {/* Bundle-Angebot direkt auf der Produktseite (nur Leinwand + wenn Mengenrabatt aktiv) */}
+      {p.art === "leinwand" && bundleStufen.length > 0 && bundleMotive.length > 0 && (
+        <BundleBox
+          aktuell={{ id: p.id, name: p.motiv.name, bild: p.bilder[0]?.klein ?? "", preis: groesse.preis, groesseLabel: groesse.label }}
+          weitere={bundleMotive}
+          stufen={bundleStufen}
+        />
       )}
 
       {/* 30-Tage-Versprechen prominent (Risikoumkehr) */}

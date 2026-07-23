@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PRODUKTE, PRODUKTARTEN, KATEGORIEN, WELT_FARBEN } from "@/lib/katalog";
 import { ladeKatalog, ladeProduktById } from "@/lib/katalog-db";
+import { ladeSettings } from "@/lib/settings";
 import {
   euro, INFO_LEINWAND, INFO_TAPETE, INFO_WALLPRINT,
 } from "@/lib/preise";
@@ -61,6 +62,17 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
       x.motiv.kategorien.some((k) => p.motiv.kategorien.includes(k))
   ).slice(0, 4);
   const wohnbilder = p.bilder.filter((b) => b.typ === "wb").slice(0, 4);
+
+  // Bundle: andere Leinwand-Motive zum Dazuwählen + Mengenrabatt-Stufen
+  const settings = await ladeSettings();
+  const mr = settings.mengenrabatt;
+  const bundleStufen = mr.aktiv ? [...(mr.stufen ?? [])].sort((a, b) => a.ab - b.ab) : [];
+  const bundleMotive = bundleStufen.length
+    ? alle.filter((x) => x.art === "leinwand" && x.id !== p.id).map((x) => {
+        const bel = x.groessen.find((g) => g.beliebt) ?? x.groessen[0];
+        return { id: x.id, name: x.motiv.name, bild: x.bilder[0]?.klein ?? "", preis: bel.preis, groesseLabel: bel.label };
+      })
+    : [];
 
   const info = p.art === "tapete" ? INFO_TAPETE : p.art === "wallprint" ? INFO_WALLPRINT : INFO_LEINWAND;
   const infoZeilen = Object.values(info).flat();
@@ -206,7 +218,7 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
             <p className="text-[14.5px] text-muted mt-1.5">{p.motiv.untertitel}</p>
           </div>
 
-          <BuyBox p={p} />
+          <BuyBox p={p} bundleMotive={bundleMotive} bundleStufen={bundleStufen} />
         </div>
       </div>
 
