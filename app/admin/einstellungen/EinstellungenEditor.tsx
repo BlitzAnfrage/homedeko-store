@@ -161,12 +161,52 @@ function RechtstexteKarte({ r, onDone }: { r: ShopSettings["rechtstexte"]; onDon
   );
 }
 
-export default function EinstellungenEditor({ settings }: { settings: ShopSettings }) {
+/* ── Zahlung: Status (Stripe/Resend) + Bankverbindung für Vorkasse ─────── */
+function ZahlungKarte({ z, status, onDone }: {
+  z: ShopSettings["zahlung"]; status: { stripe: boolean; resend: boolean }; onDone: () => void;
+}) {
+  const [s, setS] = useState(z);
+  const { status: st, speichern } = useSpeichern("zahlung", onDone);
+  const set = (k: keyof typeof s) => (x: string) => setS({ ...s, [k]: x });
+
+  const Ampel = ({ an, label, hint }: { an: boolean; label: string; hint: string }) => (
+    <div className="flex items-start gap-2.5 rounded-lg border border-[#e5e2dc] px-3.5 py-2.5">
+      <span className={`mt-1 h-2.5 w-2.5 rounded-full shrink-0 ${an ? "bg-ok" : "bg-[#d5d0c6]"}`} />
+      <div>
+        <div className="text-[13.5px] font-semibold text-ink-strong">{label}: {an ? "aktiv" : "nicht eingerichtet"}</div>
+        <div className="text-[12px] text-muted">{hint}</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <Karte titel="Zahlung" hinweis="Kartenzahlung (Stripe) und E-Mail-Versand (Resend) werden über Umgebungsvariablen aktiviert. Ohne Stripe läuft der Shop automatisch auf Vorkasse.">
+      <div className="grid sm:grid-cols-2 gap-2.5 mb-4">
+        <Ampel an={status.stripe} label="Kartenzahlung (Stripe)" hint={status.stripe ? "Kunden zahlen online." : "Ohne Stripe: Vorkasse. Keys als ENV setzen."} />
+        <Ampel an={status.resend} label="Bestell-E-Mails (Resend)" hint={status.resend ? "Bestätigungen werden versendet." : "Ohne Resend: keine automatischen Mails."} />
+      </div>
+      <div className="text-[13px] font-semibold text-ink-strong mb-1.5">Bankverbindung für Vorkasse</div>
+      <p className="text-[12.5px] text-muted mb-3">Wird dem Kunden bei Vorkasse auf der Danke-Seite und per E-Mail angezeigt.</p>
+      <div className="grid sm:grid-cols-2 gap-3">
+        <Feld label="Kontoinhaber" value={s.bank_inhaber} onChange={set("bank_inhaber")} breit />
+        <Feld label="IBAN" value={s.bank_iban} onChange={set("bank_iban")} />
+        <Feld label="BIC" value={s.bank_bic} onChange={set("bank_bic")} />
+        <Feld label="Bank" value={s.bank_name} onChange={set("bank_name")} breit />
+      </div>
+      <SpeichernLeiste status={st} onSave={() => speichern(s)} />
+    </Karte>
+  );
+}
+
+export default function EinstellungenEditor({ settings, status }: {
+  settings: ShopSettings; status: { stripe: boolean; resend: boolean };
+}) {
   const router = useRouter();
   const onDone = () => router.refresh();
   return (
     <div className="space-y-4 max-w-3xl">
       <VersandKarte v={settings.versand} onDone={onDone} />
+      <ZahlungKarte z={settings.zahlung} status={status} onDone={onDone} />
       <FirmaKarte f={settings.firma} onDone={onDone} />
       <TexteKarte t={settings.texte} onDone={onDone} />
       <RechtstexteKarte r={settings.rechtstexte} onDone={onDone} />

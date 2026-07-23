@@ -4,20 +4,33 @@ import "./globals.css";
 import { CartProvider } from "@/lib/cart";
 import ShopChrome from "@/components/ShopChrome";
 import { ladeSettings } from "@/lib/settings";
+import { hatStripe } from "@/lib/zahlung";
 import { SITE } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE.domain),
-  title: {
-    default: "Homedeko Store — Leinwandbilder, Fototapeten & Wallprints",
-    template: "%s | Homedeko Store",
-  },
-  description: SITE.beschreibung,
-  icons: { icon: "/logo.png" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await ladeSettings();
+  const domain = s.firma.domain || SITE.domain;
+  const name = s.firma.name || "Homedeko Store";
+  const beschreibung = s.texte.seo_beschreibung || SITE.beschreibung;
+  const titelDefault = `${name} — Leinwandbilder, Fototapeten & Wallprints`;
+  return {
+    metadataBase: new URL(domain),
+    title: { default: titelDefault, template: `%s | ${name}` },
+    description: beschreibung,
+    icons: { icon: "/logo.png" },
+    openGraph: {
+      type: "website", siteName: name, title: titelDefault, description: beschreibung,
+      url: domain, locale: "de_DE",
+      images: [{ url: "/og.jpg", width: 1200, height: 630, alt: name }],
+    },
+    twitter: {
+      card: "summary_large_image", title: titelDefault, description: beschreibung, images: ["/og.jpg"],
+    },
+  };
+}
 
 /* Header-Banner + Footer-Firmendaten kommen aus der DB und sollen IMMER aktuell
    sein → Layout bei jedem Request rendern. Die einzelnen Seiten bleiben davon
@@ -35,6 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             firmaName={settings.firma.name}
             versandFreiAb={settings.versand.frei_ab}
             versandKosten={settings.versand.kosten}
+            stripeAktiv={hatStripe()}
           >
             {children}
           </ShopChrome>

@@ -17,11 +17,16 @@ export type TexteSettings = {
 export type RechtstexteSettings = {
   impressum: string; datenschutz: string; agb: string; widerruf: string;
 };
+export type ZahlungSettings = {
+  /* Bankverbindung für Vorkasse — wird dem Kunden nach Bestellung angezeigt. */
+  bank_inhaber: string; bank_iban: string; bank_bic: string; bank_name: string;
+};
 export type ShopSettings = {
   versand: VersandSettings;
   firma: FirmaSettings;
   texte: TexteSettings;
   rechtstexte: RechtstexteSettings;
+  zahlung: ZahlungSettings;
 };
 
 /* Code-Defaults — greifen, wenn die DB nichts liefert. */
@@ -42,6 +47,7 @@ export const DEFAULT_SETTINGS: ShopSettings = {
     seo_beschreibung: "Kuratierte Wandbilder: Leinwandbilder, 3er-Sets, Fototapeten und selbstklebende Wallprints. In Handarbeit veredelte Motive, fertig bespannt, ab 18 €.",
   },
   rechtstexte: { impressum: "", datenschutz: "", agb: "", widerruf: "" },
+  zahlung: { bank_inhaber: "", bank_iban: "", bank_bic: "", bank_name: "" },
 };
 
 /* Lädt alle Einstellungen und merged sie über die Defaults (fehlende Keys
@@ -58,6 +64,7 @@ export async function ladeSettings(): Promise<ShopSettings> {
       firma: { ...DEFAULT_SETTINGS.firma, ...(map.get("firma") as object ?? {}) },
       texte: { ...DEFAULT_SETTINGS.texte, ...(map.get("texte") as object ?? {}) },
       rechtstexte: { ...DEFAULT_SETTINGS.rechtstexte, ...(map.get("rechtstexte") as object ?? {}) },
+      zahlung: { ...DEFAULT_SETTINGS.zahlung, ...(map.get("zahlung") as object ?? {}) },
     };
   } catch {
     return DEFAULT_SETTINGS;

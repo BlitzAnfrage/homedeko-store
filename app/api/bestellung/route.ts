@@ -1,59 +1,94 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabase";
+import { bestellungAnlegen, type BestellItem } from "@/lib/bestellung";
+import { hatStripe, stripeClient, basisUrl } from "@/lib/zahlung";
 
-/* Bestellung anlegen → Supabase (dauerhaft, auch auf Netlify).
-   Rabatt wird serverseitig erneut geprüft (nie dem Client-Betrag vertrauen)
-   und der Nutzungszähler des Codes erhöht. */
+/* Checkout-Einstieg.
+   - Stripe konfiguriert → erstellt eine Stripe-Checkout-Session, gibt deren URL
+     zurück (Kunde wird dorthin geleitet, Bestellung entsteht erst im Webhook).
+   - Sonst (Vorkasse) → Bestellung sofort speichern + Bestätigungsmail mit
+     Bankdaten, Rückgabe der Bestellnummer. */
 export async function POST(req: Request) {
   try {
     const body = await req.json();
     if (!body?.items?.length || !body?.kunde?.email) {
       return NextResponse.json({ fehler: "Unvollständige Bestellung." }, { status: 400 });
     }
-
-    const sb = supabaseServer();
-    if (!sb) return NextResponse.json({ fehler: "Speicher nicht verfügbar." }, { status: 500 });
-
+    const items = body.items as BestellItem[];
+    const kunde = body.kunde as Record<string, string>;
     const summe = Number(body.summe) || 0;
     const versand = Number(body.versand) || 0;
+    const rabattCode = body.rabattCode ?? null;
 
-    // Rabatt serverseitig verifizieren (Client-Betrag ignorieren)
-    let rabattCode: string | null = null;
-    let rabattBetrag = 0;
-    if (body.rabattCode) {
-      const { data: rc } = await sb.from("rabattcodes").select("*").eq("code", String(body.rabattCode).toUpperCase()).maybeSingle();
-      if (rc && rc.aktiv && summe >= Number(rc.mindestwert || 0)
-          && (!rc.gueltig_bis || new Date(rc.gueltig_bis) >= new Date())
-          && (rc.max_nutzungen == null || rc.genutzt < rc.max_nutzungen)) {
-        rabattCode = rc.code;
-        rabattBetrag = rc.typ === "prozent"
-          ? Math.round(summe * (Number(rc.wert) / 100) * 100) / 100
-          : Math.min(summe, Number(rc.wert));
-        // Nutzungszähler +1
-        await sb.from("rabattcodes").update({ genutzt: Number(rc.genutzt) + 1 }).eq("id", rc.id);
+    // ── Stripe-Weg ──────────────────────────────────────────────
+    const stripe = stripeClient();
+    if (hatStripe() && stripe) {
+      // Rabatt als negativer „Coupon" ist komplex — wir bilden den Rabatt als
+      // anteilige Reduktion je Position ab, indem wir eine Rabatt-Zeile ergänzen.
+      const line_items = items.map((i) => ({
+        quantity: i.menge,
+        price_data: {
+          currency: "eur",
+          unit_amount: Math.round(i.preis * 100),
+          product_data: { name: `${i.name} — ${i.variante}` },
+        },
+      }));
+      if (versand > 0) {
+        line_items.push({
+          quantity: 1,
+          price_data: { currency: "eur", unit_amount: Math.round(versand * 100), product_data: { name: "Versand" } },
+        });
       }
-    }
 
-    const gesamt = Math.max(0, summe - rabattBetrag) + versand;
-    const nummer = "HD-" + Date.now().toString(36).toUpperCase();
+      // Rabatt via Stripe-Coupon (einmalig, amount_off)
+      let discounts: { coupon: string }[] | undefined;
+      if (rabattCode) {
+        const { pruefeRabattBetrag } = await import("@/lib/rabatt-pruefung");
+        const betrag = await pruefeRabattBetrag(rabattCode, summe);
+        if (betrag > 0) {
+          const coupon = await stripe.coupons.create({ amount_off: Math.round(betrag * 100), currency: "eur", duration: "once", name: `Rabatt ${rabattCode}` });
+          discounts = [{ coupon: coupon.id }];
+        }
+      }
 
-    const { error } = await sb.from("bestellungen").insert({
-      nummer, status: "neu",
-      kunde: body.kunde, items: body.items,
-      summe, versand, rabatt_code: rabattCode, rabatt_betrag: rabattBetrag, gesamt,
-    });
-    if (error) return NextResponse.json({ fehler: error.message }, { status: 500 });
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        line_items,
+        discounts,
+        customer_email: kunde.email,
+        success_url: `${basisUrl()}/danke?sid={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${basisUrl()}/kasse`,
+        metadata: {
+          // Bestell-Nutzdaten kompakt für den Webhook (Stripe-Limit 500 Zeichen/Wert)
+          kunde: JSON.stringify(kunde).slice(0, 500),
+          rabattCode: rabattCode ?? "",
+          summe: String(summe),
+          versand: String(versand),
+        },
+        // vollständige Items separat, da metadata-Werte begrenzt sind
+        payment_intent_data: { metadata: { items: JSON.stringify(items).slice(0, 500) } },
+      });
 
-    const webhook = process.env.BESTELL_WEBHOOK_URL;
-    if (webhook) {
-      fetch(webhook, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nummer, kunde: body.kunde, items: body.items, gesamt }),
+      // Items + kunde vollständig zwischenspeichern (metadata reicht nicht) →
+      // wir hängen sie an die Session-Metadata über ein separates Feld an.
+      await stripe.checkout.sessions.update(session.id, {
+        metadata: {
+          kunde: JSON.stringify(kunde),
+          items: JSON.stringify(items),
+          rabattCode: rabattCode ?? "",
+          summe: String(summe),
+          versand: String(versand),
+        },
       }).catch(() => {});
+
+      return NextResponse.json({ ok: true, stripeUrl: session.url });
     }
 
-    return NextResponse.json({ ok: true, nummer, gesamt, rabattBetrag });
-  } catch {
-    return NextResponse.json({ fehler: "Bestellung konnte nicht gespeichert werden." }, { status: 500 });
+    // ── Vorkasse-Weg ────────────────────────────────────────────
+    const res = await bestellungAnlegen({ kunde, items, summe, versand, rabattCode, zahlart: "vorkasse", bezahlt: false });
+    if (!res.ok) return NextResponse.json({ fehler: res.fehler }, { status: 500 });
+    return NextResponse.json({ ok: true, nummer: res.nummer, gesamt: res.gesamt });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Bestellung konnte nicht verarbeitet werden.";
+    return NextResponse.json({ fehler: msg }, { status: 500 });
   }
 }

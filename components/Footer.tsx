@@ -1,15 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { KATEGORIEN } from "@/lib/katalog";
-import { TRUST_ZEILE, ZAHLARTEN } from "@/lib/site";
+import { TRUST_ZEILE } from "@/lib/site";
 import PayLogos from "./PayLogos";
 import { IconCheck, IconLock } from "./Icon";
 
-export default function Footer({ firmaName, versandFreiAb = 60, versandKosten = 8 }: {
-  firmaName?: string; versandFreiAb?: number; versandKosten?: number;
+export default function Footer({ firmaName, versandFreiAb = 60, versandKosten = 8, stripeAktiv = false }: {
+  firmaName?: string; versandFreiAb?: number; versandKosten?: number; stripeAktiv?: boolean;
 }) {
   const name = firmaName || "Homedeko Store";
   const jahr = 2026;
+  // Nur ECHTE Zahlarten zeigen: mit Stripe die Karten/Wallet-Methoden, sonst Vorkasse.
+  const zahlarten = stripeAktiv ? ["visa", "mastercard", "applepay", "klarna"] : ["rechnung"];
   return (
     <footer className="bg-ink-strong text-white/80 mt-20">
       <div className="brandlinie" />
@@ -67,11 +69,11 @@ export default function Footer({ firmaName, versandFreiAb = 60, versandKosten = 
           </p>
         </div>
       </div>
-      {/* Zahlungsarten */}
+      {/* Zahlungsarten — nur was wirklich angeboten wird */}
       <div className="border-t border-white/10">
         <div className="mx-auto max-w-7xl px-4 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span className="text-[12.5px] text-white/55">Sicher bezahlen mit</span>
-          <PayLogos arten={ZAHLARTEN} />
+          <span className="text-[12.5px] text-white/55">{stripeAktiv ? "Sicher bezahlen mit" : "Zahlung per Vorkasse (Überweisung)"}</span>
+          <PayLogos arten={zahlarten} />
         </div>
       </div>
       <div className="border-t border-white/10 py-5 text-center text-[12.5px] text-white/50">
