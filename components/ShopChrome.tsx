@@ -8,7 +8,7 @@ import Reveal from "./Reveal";
    /admin hat sein eigenes Layout. Banner/Firma/Versand kommen als Props vom
    Server-Layout (das die Settings lädt). */
 export default function ShopChrome({
-  children, banner, firmaName, versandFreiAb, versandKosten, stripeAktiv,
+  children, banner, firmaName, versandFreiAb, versandKosten, stripeAktiv, setAktiv,
 }: {
   children: React.ReactNode;
   banner?: string[];
@@ -16,6 +16,7 @@ export default function ShopChrome({
   versandFreiAb?: number;
   versandKosten?: number;
   stripeAktiv?: boolean;
+  setAktiv?: boolean;
 }) {
   const path = usePathname();
   const istAdmin = path?.startsWith("/admin");
@@ -24,7 +25,7 @@ export default function ShopChrome({
 
   return (
     <>
-      <Header banner={banner} />
+      <Header banner={banner} setAktiv={setAktiv} />
       <main>{children}</main>
       <Footer firmaName={firmaName} versandFreiAb={versandFreiAb} versandKosten={versandKosten} stripeAktiv={stripeAktiv} />
       <Reveal />

@@ -15,7 +15,7 @@ const NAV = [
   { href: "/kategorie/wallprints", label: "Wallprints" },
 ];
 
-export default function Header({ banner }: { banner?: string[] }) {
+export default function Header({ banner, setAktiv }: { banner?: string[]; setAktiv?: boolean }) {
   const { anzahl } = useCart();
   const router = useRouter();
   const vorteile = banner && banner.length ? banner : VORTEILE;
@@ -112,6 +112,11 @@ export default function Header({ banner }: { banner?: string[] }) {
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} className="hover:text-accent-ink py-3">{n.label}</Link>
           ))}
+          {setAktiv && (
+            <Link href="/set" className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-bordeaux text-white px-3.5 py-1.5 text-[13px] font-semibold hover:bg-bordeaux-deep">
+              ✦ Set & sparen
+            </Link>
+          )}
           <button
             className="flex items-center gap-1 hover:text-accent-ink py-3"
             onMouseEnter={megaAuf} onClick={() => setMega((m) => !m)}
@@ -168,6 +173,9 @@ export default function Header({ banner }: { banner?: string[] }) {
               {NAV.map((n) => (
                 <Link key={n.href} href={n.href} onClick={() => setMobil(false)} className="block px-3 py-3 text-[15px] font-medium border-b border-line">{n.label}</Link>
               ))}
+              {setAktiv && (
+                <Link href="/set" onClick={() => setMobil(false)} className="block px-3 py-3 text-[15px] font-semibold text-bordeaux border-b border-line">✦ Set & sparen</Link>
+              )}
               <div className="px-3 pt-4 pb-1 eyebrow">Motiv-Welten</div>
               {KATEGORIEN.map((k) => (
                 <Link key={k.slug} href={`/kategorie/${k.slug}`} onClick={() => setMobil(false)} className="block px-3 py-2.5 text-[14.5px] border-b border-line last:border-0">{k.name}</Link>

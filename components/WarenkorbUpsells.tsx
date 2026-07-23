@@ -1,22 +1,44 @@
 "use client";
+import Link from "next/link";
 import { useCart } from "@/lib/cart";
 import { euro } from "@/lib/preise";
 import { IconCheck } from "./Icon";
 
-/* Upsells im Warenkorb: Mengenrabatt-Hinweis („nimm noch eins dazu") + Add-ons
+/* Upsells im Warenkorb: prominenter Mengenrabatt-Fortschritt + Add-ons
    zum Ankreuzen. Zeigt nichts, wenn nichts konfiguriert ist. */
 export default function WarenkorbUpsells() {
   const cart = useCart();
+  const stufen = cart.mengenrabattStufen;
 
   return (
     <>
-      {/* Mengenrabatt-Verführung */}
-      {cart.naechsteStufe && (
-        <div className="mb-4 rounded-lg border border-gold/40 bg-gold-soft px-3.5 py-2.5 text-[13px]">
-          <b className="text-gold-ink">Mehr nehmen, mehr sparen:</b>{" "}
-          Noch <b>{cart.naechsteStufe.ab - cart.anzahlBilder}</b>{" "}
-          {cart.naechsteStufe.ab - cart.anzahlBilder === 1 ? "Bild" : "Bilder"} dazu und du sparst{" "}
-          <b>{cart.naechsteStufe.prozent}%</b> auf alle.
+      {/* Prominenter Mengenrabatt-Fortschritt (Stufen-Balken) */}
+      {stufen.length > 0 && (
+        <div className="mb-4 rounded-xl border border-gold/40 bg-gold-soft p-3.5">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[13px] font-semibold text-gold-ink">
+              {cart.mengenrabattProzent > 0 ? `🎉 Du sparst ${cart.mengenrabattProzent}%!` : "Mehr nehmen, mehr sparen"}
+            </span>
+            {cart.mengenrabattBetrag > 0 && <span className="text-[13px] font-bold text-ok">−{euro(cart.mengenrabattBetrag)}</span>}
+          </div>
+          <div className="flex gap-1.5">
+            {stufen.map((st) => {
+              const erreicht = cart.anzahlBilder >= st.ab;
+              return (
+                <div key={st.ab} className="flex-1">
+                  <div className={`h-1.5 rounded-full transition-colors ${erreicht ? "bg-ok" : "bg-white/70"}`} />
+                  <div className={`text-[10.5px] mt-1 text-center font-semibold ${erreicht ? "text-ok" : "text-gold-ink/60"}`}>{st.ab}+ = {st.prozent}%</div>
+                </div>
+              );
+            })}
+          </div>
+          {cart.naechsteStufe && (
+            <p className="mt-2.5 text-[12.5px] text-gold-ink text-center">
+              Noch <b>{cart.naechsteStufe.ab - cart.anzahlBilder}</b>{" "}
+              {cart.naechsteStufe.ab - cart.anzahlBilder === 1 ? "Bild" : "Bilder"} für <b>−{cart.naechsteStufe.prozent}%</b>{" — "}
+              <Link href="/set" className="underline font-semibold">Set zusammenstellen</Link>
+            </p>
+          )}
         </div>
       )}
 

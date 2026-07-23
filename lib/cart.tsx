@@ -38,6 +38,7 @@ type CartCtx = {
   /* Mengenrabatt */
   mengenrabattProzent: number;
   mengenrabattBetrag: number;
+  mengenrabattStufen: MengenrabattStufe[];
   anzahlBilder: number;                  // für „nimm noch eins dazu"
   naechsteStufe: MengenrabattStufe | null;
   gesamt: number;
@@ -188,7 +189,9 @@ export function CartProvider({
       addonGewaehlt: (id) => addonIds.includes(id),
       addonToggle: (id) => setAddonIds((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]),
       addonSumme, gewaehlteAddons,
-      mengenrabattProzent: mrProzent, mengenrabattBetrag, anzahlBilder, naechsteStufe,
+      mengenrabattProzent: mrProzent, mengenrabattBetrag,
+      mengenrabattStufen: mengenrabatt.aktiv ? stufen : [],
+      anzahlBilder, naechsteStufe,
       gesamt,
       anzahl: items.reduce((s, i) => s + i.menge, 0),
     };

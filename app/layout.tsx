@@ -55,6 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             versandFreiAb={settings.versand.frei_ab}
             versandKosten={settings.versand.kosten}
             stripeAktiv={hatStripe()}
+            setAktiv={settings.mengenrabatt.aktiv}
           >
             {children}
           </ShopChrome>
