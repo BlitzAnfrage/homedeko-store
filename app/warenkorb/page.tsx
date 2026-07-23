@@ -4,6 +4,7 @@ import { useCart } from "@/lib/cart";
 import { euro, VERSAND_FREI_AB } from "@/lib/preise";
 import { ZAHLARTEN } from "@/lib/site";
 import PayLogos from "@/components/PayLogos";
+import RabattFeld from "@/components/RabattFeld";
 import { IconArrowRight, IconCheck, IconLock, IconMinus, IconPlus, IconTrash } from "@/components/Icon";
 
 export default function WarenkorbSeite() {
@@ -62,8 +63,14 @@ export default function WarenkorbSeite() {
               </div>
             </div>
 
+            {/* Rabattcode */}
+            <RabattFeld />
+
             <dl className="space-y-2 text-[14px]">
               <div className="flex justify-between"><dt className="text-muted">Zwischensumme</dt><dd className="font-semibold">{euro(cart.summe)}</dd></div>
+              {cart.rabatt && cart.rabattBetrag > 0 && (
+                <div className="flex justify-between text-ok"><dt className="font-medium">Rabatt „{cart.rabatt.code}“</dt><dd className="font-semibold">−{euro(cart.rabattBetrag)}</dd></div>
+              )}
               <div className="flex justify-between"><dt className="text-muted">Versand (DE)</dt><dd className="font-semibold">{cart.versand === 0 ? "kostenlos" : euro(cart.versand)}</dd></div>
               <div className="flex justify-between border-t border-line pt-2.5 text-[16px]"><dt className="font-bold">Gesamt</dt><dd className="font-bold">{euro(cart.gesamt)}</dd></div>
             </dl>

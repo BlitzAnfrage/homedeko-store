@@ -24,7 +24,7 @@ export default function KasseSeite() {
       const res = await fetch("/api/bestellung", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kunde, items: cart.items, summe: cart.summe, versand: cart.versand, gesamt: cart.gesamt }),
+        body: JSON.stringify({ kunde, items: cart.items, summe: cart.summe, versand: cart.versand, gesamt: cart.gesamt, rabattCode: cart.rabatt?.code ?? null }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.fehler ?? "Unbekannter Fehler");
@@ -103,6 +103,9 @@ export default function KasseSeite() {
           </ul>
           <dl className="space-y-1.5 text-[14px] border-t border-line pt-3">
             <div className="flex justify-between"><dt className="text-muted">Zwischensumme</dt><dd>{euro(cart.summe)}</dd></div>
+            {cart.rabatt && cart.rabattBetrag > 0 && (
+              <div className="flex justify-between text-ok"><dt>Rabatt „{cart.rabatt.code}“</dt><dd>−{euro(cart.rabattBetrag)}</dd></div>
+            )}
             <div className="flex justify-between"><dt className="text-muted">Versand</dt><dd>{cart.versand === 0 ? "kostenlos" : euro(cart.versand)}</dd></div>
             <div className="flex justify-between font-bold text-[15.5px] pt-1"><dt>Gesamt</dt><dd>{euro(cart.gesamt)}</dd></div>
           </dl>

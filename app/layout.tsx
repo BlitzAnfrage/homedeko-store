@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import Reveal from "@/components/Reveal";
+import ShopChrome from "@/components/ShopChrome";
 import { SITE } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -25,10 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="de">
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
         <CartProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <Reveal />
+          <ShopChrome>{children}</ShopChrome>
         </CartProvider>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
           "@context": "https://schema.org", "@type": "WebSite",
