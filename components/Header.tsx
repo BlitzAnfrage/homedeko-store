@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart";
 import { VORTEILE } from "@/lib/site";
 import { KATEGORIEN, MOTIVE, motivBild, WELT_FARBEN } from "@/lib/katalog";
-import { IconCart, IconCheck, IconChevron, IconClose, IconMenu, IconSearch } from "./Icon";
+import { IconCart, IconCheck, IconChevron, IconClose, IconFrame, IconMenu, IconSearch } from "./Icon";
 
 const NAV = [
   { href: "/kategorie/leinwandbilder", label: "Leinwandbilder" },
@@ -113,8 +113,8 @@ export default function Header({ banner, setAktiv }: { banner?: string[]; setAkt
             <Link key={n.href} href={n.href} className="hover:text-accent-ink py-3">{n.label}</Link>
           ))}
           {setAktiv && (
-            <Link href="/set" className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-bordeaux text-white px-3.5 py-1.5 text-[13px] font-semibold hover:bg-bordeaux-deep">
-              ✦ Set & sparen
+            <Link href="/set" className="ml-auto inline-flex items-center gap-1.5 py-3 font-semibold text-gold-ink hover:underline underline-offset-4 decoration-gold/50">
+              <IconFrame size={16} /> Set gestalten &amp; sparen
             </Link>
           )}
           <button
@@ -174,7 +174,9 @@ export default function Header({ banner, setAktiv }: { banner?: string[]; setAkt
                 <Link key={n.href} href={n.href} onClick={() => setMobil(false)} className="block px-3 py-3 text-[15px] font-medium border-b border-line">{n.label}</Link>
               ))}
               {setAktiv && (
-                <Link href="/set" onClick={() => setMobil(false)} className="block px-3 py-3 text-[15px] font-semibold text-bordeaux border-b border-line">✦ Set & sparen</Link>
+                <Link href="/set" onClick={() => setMobil(false)} className="flex items-center gap-2 px-3 py-3 text-[15px] font-semibold text-gold-ink border-b border-line">
+                  <IconFrame size={17} /> Set gestalten &amp; sparen
+                </Link>
               )}
               <div className="px-3 pt-4 pb-1 eyebrow">Motiv-Welten</div>
               {KATEGORIEN.map((k) => (
