@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase";
 
 /* Motiv-Override aktualisieren. Body: { slug, ...felder } */
@@ -17,5 +18,7 @@ export async function PATCH(req: Request) {
 
   const { error } = await sb.from("motive_override").update(patch).eq("slug", b.slug);
   if (error) return NextResponse.json({ fehler: error.message }, { status: 500 });
+
+  revalidatePath("/", "layout");
   return NextResponse.json({ ok: true });
 }

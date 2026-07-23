@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  KATEGORIEN, produkteInKategorie, produkteVonArt, Produkt, WELT_FARBEN,
-} from "@/lib/katalog";
+import { KATEGORIEN, Produkt, WELT_FARBEN } from "@/lib/katalog";
+import { ladeProdukteInKategorie, ladeProdukteVonArt } from "@/lib/katalog-db";
 import { euro } from "@/lib/preise";
 import ProductCard from "@/components/ProductCard";
+
+export const revalidate = 60;
 
 /* Produktart-Kollektionen mit echten Fakten aus der HDS-PDF */
 const ART_SEITEN: Record<string, { art: "leinwand" | "set3" | "tapete" | "wallprint"; name: string; claim: string; text: string }> = {
@@ -38,7 +39,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const art = ART_SEITEN[slug];
   if (art) {
-    const ab = Math.min(...produkteVonArt(art.art).map((p) => p.ab));
+    const prod = await ladeProdukteVonArt(art.art);
+    const ab = prod.length ? Math.min(...prod.map((p) => p.ab)) : 0;
     return { title: `${art.name} ab ${euro(ab)} — ${art.claim}`, description: art.text.slice(0, 160), alternates: { canonical: `/kategorie/${slug}` } };
   }
   const kat = KATEGORIEN.find((k) => k.slug === slug);
@@ -55,13 +57,13 @@ export default async function KategorieSeite({ params }: { params: Promise<{ slu
   let produkte: Produkt[];
   let titel: string, claim: string, text: string;
   if (artSeite) {
-    produkte = produkteVonArt(artSeite.art);
+    produkte = await ladeProdukteVonArt(artSeite.art);
     titel = artSeite.name; claim = artSeite.claim; text = artSeite.text;
   } else {
-    produkte = produkteInKategorie(kat!.slug).filter((p) => p.art === "leinwand");
+    produkte = (await ladeProdukteInKategorie(kat!.slug)).filter((p) => p.art === "leinwand");
     titel = kat!.name; claim = kat!.claim; text = kat!.beschreibung;
   }
-  const ab = Math.min(...produkte.map((p) => p.ab));
+  const ab = produkte.length ? Math.min(...produkte.map((p) => p.ab)) : 0;
   const farbe = kat ? WELT_FARBEN[kat.slug] : { fg: "#8a6626", bg: "#f5edda" };
 
   return (

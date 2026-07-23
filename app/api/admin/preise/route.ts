@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase";
 
 /* Speichert die Größen einer Preisstaffel. Body: { id, groessen: [...] } */
@@ -25,5 +26,9 @@ export async function PUT(req: Request) {
     .eq("id", body.id);
 
   if (error) return NextResponse.json({ fehler: error.message }, { status: 500 });
+
+  // Shop-Seiten sofort neu rendern lassen (statt bis zu 60 s zu warten)
+  revalidatePath("/", "layout");
+
   return NextResponse.json({ ok: true, anzahl: groessen.length });
 }

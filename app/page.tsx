@@ -1,7 +1,6 @@
 import Link from "next/link";
-import {
-  KATEGORIEN, MOTIVE, PRODUKTE, motivBild, motivWohnbild, produkteVonArt, WELT_FARBEN,
-} from "@/lib/katalog";
+import { KATEGORIEN, motivBild, motivWohnbild, WELT_FARBEN } from "@/lib/katalog";
+import { ladeKatalog, ladeMotiveAktiv } from "@/lib/katalog-db";
 import { euro, INFO_LEINWAND } from "@/lib/preise";
 import { USPS } from "@/lib/site";
 import ProductCard from "@/components/ProductCard";
@@ -17,9 +16,14 @@ const USP_ICONS: Record<string, { icon: React.ReactNode; farbe: string }> = {
   lock: { icon: <IconLock size={22} />, farbe: "text-bordeaux" },
 };
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function Home() {
+  const PRODUKTE = await ladeKatalog();
+  const MOTIVE = await ladeMotiveAktiv();
   const lieblinge = PRODUKTE.filter((p) => p.art === "leinwand" && p.motiv.bestseller);
-  const monat = PRODUKTE.find((p) => p.id === "leinwandbild-goldtattoo")!;
+  const monat = PRODUKTE.find((p) => p.id === "leinwandbild-goldtattoo")
+    ?? PRODUKTE.find((p) => p.art === "leinwand")!;
   const monatBild = motivBild("goldtattoo");
 
   /* Szene = Wohnbeispiel eines Motivs (Raumtiefe), davor schwebt EIN ANDERES Motiv
@@ -64,11 +68,12 @@ export default function Home() {
     { wort: "Romantisch", slug: "blumen-natur", motiv: "rosa-rose-struktur", text: "Blüten ohne Kitsch" },
   ].map((m) => ({ ...m, bild: motivBild(m.motiv) })).filter((m) => m.bild);
 
+  const vonArt = (art: string) => PRODUKTE.filter((p) => p.art === art);
   const arten = [
-    { p: produkteVonArt("leinwand"), titel: "Leinwandbilder", href: "/kategorie/leinwandbilder", slug: "goldtattoo" },
-    { p: produkteVonArt("set3"), titel: "3er-Sets", href: "/kategorie/3er-sets", slug: "bluetentraum-grunge" },
-    { p: produkteVonArt("tapete"), titel: "Fototapeten", href: "/kategorie/fototapeten", slug: "arabische-tueren" },
-    { p: produkteVonArt("wallprint"), titel: "Wallprints", href: "/kategorie/wallprints", slug: "rosette-tuerkis" },
+    { p: vonArt("leinwand"), titel: "Leinwandbilder", href: "/kategorie/leinwandbilder", slug: "goldtattoo" },
+    { p: vonArt("set3"), titel: "3er-Sets", href: "/kategorie/3er-sets", slug: "bluetentraum-grunge" },
+    { p: vonArt("tapete"), titel: "Fototapeten", href: "/kategorie/fototapeten", slug: "arabische-tueren" },
+    { p: vonArt("wallprint"), titel: "Wallprints", href: "/kategorie/wallprints", slug: "rosette-tuerkis" },
   ];
 
   const panoTuer = motivWohnbild("fernoestlicher-tempel-eins");
@@ -309,7 +314,7 @@ export default function Home() {
         {motivBild("goldtattoo") && (
           <div className="rounded-md overflow-hidden border border-line order-2 lg:order-1 lift">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={PRODUKTE.find((p) => p.id === "leinwandbild-goldtattoo")!.bilder.find((b) => b.typ === "det")?.big ?? monatBild!.big} alt="Leinwandstruktur im Detail" className="w-full object-cover" loading="lazy" />
+            <img src={PRODUKTE.find((p) => p.id === "leinwandbild-goldtattoo")?.bilder.find((b) => b.typ === "det")?.big ?? monatBild!.big} alt="Leinwandstruktur im Detail" className="w-full object-cover" loading="lazy" />
           </div>
         )}
         <div className="order-1 lg:order-2">

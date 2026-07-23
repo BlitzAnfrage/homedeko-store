@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  PRODUKTE, PRODUKTARTEN, produktById, KATEGORIEN, WELT_FARBEN,
-} from "@/lib/katalog";
+import { PRODUKTE, PRODUKTARTEN, KATEGORIEN, WELT_FARBEN } from "@/lib/katalog";
+import { ladeKatalog, ladeProduktById } from "@/lib/katalog-db";
 import {
   euro, INFO_LEINWAND, INFO_TAPETE, INFO_WALLPRINT,
 } from "@/lib/preise";
@@ -24,13 +23,19 @@ const NUTZEN: Record<string, string> = {
   poster: "Leichtes Budget, ab 18 €",
 };
 
+/* Seiten alle 60 s revalidieren → Admin-Änderungen (Preise/Motive) erscheinen
+   spätestens nach 1 Min, ohne jede Anfrage die DB zu treffen. Zusätzlich
+   löst das Admin nach dem Speichern eine sofortige Revalidierung aus. */
+export const revalidate = 60;
+
 export function generateStaticParams() {
+  // volle ID-Liste (unabhängig von DB) für Vorab-Rendering
   return PRODUKTE.map((p) => ({ id: p.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const p = produktById(id);
+  const p = await ladeProduktById(id);
   if (!p) return {};
   return {
     title: `${p.name} ab ${euro(p.ab)}`,
@@ -41,15 +46,17 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ProduktSeite({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const p = produktById(id);
+  const p = await ladeProduktById(id);
   if (!p) notFound();
 
   const kats = p.motiv.kategorien
     .map((k) => KATEGORIEN.find((x) => x.slug === k))
     .filter(Boolean) as { slug: string; name: string }[];
 
-  const andereArten = PRODUKTE.filter((x) => x.motiv.slug === p.motiv.slug && x.id !== p.id);
-  const aehnlich = PRODUKTE.filter(
+  // Nebenlisten aus dem DB-überlagerten Katalog (blendet inaktive Motive aus)
+  const alle = await ladeKatalog();
+  const andereArten = alle.filter((x) => x.motiv.slug === p.motiv.slug && x.id !== p.id);
+  const aehnlich = alle.filter(
     (x) => x.art === p.art && x.motiv.slug !== p.motiv.slug &&
       x.motiv.kategorien.some((k) => p.motiv.kategorien.includes(k))
   ).slice(0, 4);
