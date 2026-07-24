@@ -79,8 +79,11 @@ export default function BundleBox({
   );
 
   return (
-    <div className="mt-4 rounded-xl border-2 border-gold/40 overflow-hidden">
-      <div className="bg-gold-soft px-4 py-2.5 flex items-center gap-2">
+    /* KEIN overflow-hidden hier: auf iOS Safari friert overflow-hidden + border-radius
+       das horizontale Scrollen eines Nachfahren ein. Rundecken via rounded-xl bleiben;
+       der Header bekommt seine eigene obere Rundung. */
+    <div className="mt-4 rounded-xl border-2 border-gold/40">
+      <div className="bg-gold-soft px-4 py-2.5 flex items-center gap-2 rounded-t-[10px]">
         <span className="text-[15px]">🎨</span>
         <span className="text-[13.5px] font-bold text-gold-ink">Set-Angebot: Mehr Bilder, mehr sparen</span>
       </div>
@@ -121,11 +124,11 @@ export default function BundleBox({
               </div>
             </div>
 
-            {/* Weitere Motive — seitlich scrollbare Karten. WICHTIG: das große
-                Bild ist REINE ANZEIGE (kein Klick-Handler), sonst fängt der
-                Browser jede Berührung als Tap-Kandidat ab und blockiert/verhakt
-                das Scrollen. Getoggelt wird NUR über das kleine +-Badge unten. */}
-            <div className="bundle-swipe flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {/* Weitere Motive — seitlich scrollbare Karten.
+                touch-action:pan-x sagt iOS eindeutig „diese Reihe pant horizontal“
+                (entkoppelt vom vertikalen Seiten-Scroll). Bild ist reine Anzeige. */}
+            <div className="bundle-swipe flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              style={{ touchAction: "pan-x", overscrollBehaviorX: "contain" }}>
               {weitere.map((m) => {
                 const an = m.id in zusatz;
                 return (
