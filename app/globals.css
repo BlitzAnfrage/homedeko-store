@@ -75,11 +75,6 @@
     opacity: .85;
     transition: transform .08s ease, opacity .08s ease;
   }
-  /* Bundle-Swipe-Reihe darf beim Scrollen kein :active-Feedback bekommen. */
-  .bundle-swipe:active {
-    transform: none;
-    opacity: 1;
-  }
 }
 
 body {

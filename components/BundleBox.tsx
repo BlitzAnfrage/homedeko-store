@@ -31,6 +31,7 @@ export default function BundleBox({
   // Größe von Bild 1 (das aktuelle Motiv)
   const [gIdxAktuell, setGIdxAktuell] = useState(() => startGroesse(aktuell));
   const [imKorb, setImKorb] = useState(false);
+  const [sichtbar, setSichtbar] = useState(8); // wie viele Motive im Gitter zeigen
 
   if (!stufen.length) return null;
 
@@ -107,7 +108,7 @@ export default function BundleBox({
           <div className="mt-4 fade-in">
             <p className="text-[13px] text-ink mb-2.5">
               {fehlt > 0
-                ? <>Noch <b>{fehlt}</b> {fehlt === 1 ? "Motiv" : "Motive"} wählen — wisch seitlich durch die Motive:</>
+                ? <>Noch <b>{fehlt}</b> {fehlt === 1 ? "Motiv" : "Motive"} wählen — tipp die Bilder an:</>
                 : <span className="text-ok font-semibold">✓ Set komplett — du sparst {prozent}%!</span>}
             </p>
 
@@ -124,22 +125,22 @@ export default function BundleBox({
               </div>
             </div>
 
-            {/* Weitere Motive — seitlich scrollbare Karten.
-                touch-action:pan-x sagt iOS eindeutig „diese Reihe pant horizontal“
-                (entkoppelt vom vertikalen Seiten-Scroll). Bild ist reine Anzeige. */}
-            <div className="bundle-swipe flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              style={{ touchAction: "pan-x", overscrollBehaviorX: "contain" }}>
-              {weitere.map((m) => {
+            {/* Weitere Motive — NORMALES Gitter, das mit der Seite mitscrollt.
+                KEIN eigener Scroll-Container (overflow-x/touch-action/snap) →
+                auf iOS gibt es nichts, was haken kann. */}
+            <div className="grid grid-cols-2 gap-3">
+              {weitere.slice(0, sichtbar).map((m) => {
                 const an = m.id in zusatz;
                 return (
-                  <div key={m.id} className={`shrink-0 w-[150px] rounded-xl border-2 overflow-hidden transition-colors ${an ? "border-bordeaux" : "border-line"}`}>
-                    {/* Bild: reine Anzeige, kein onClick → Scrollen wird nicht gestört */}
-                    <div className="relative block w-full aspect-square overflow-hidden">
+                  <div key={m.id} className={`rounded-xl border-2 transition-colors ${an ? "border-bordeaux" : "border-line"}`}>
+                    <button onClick={() => toggleMotiv(m)} className="relative block w-full aspect-square overflow-hidden rounded-t-[10px]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={m.bild} alt={m.name} loading="lazy" draggable={false} className="w-full h-full object-cover pointer-events-none select-none" />
-                      {an && <span className="absolute inset-0 bg-bordeaux/15 pointer-events-none" />}
-                      {an && <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-bordeaux text-white flex items-center justify-center shadow-sm pointer-events-none"><IconCheck size={13} /></span>}
-                    </div>
+                      <img src={m.bild} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                      {an && <span className="absolute inset-0 bg-bordeaux/15" />}
+                      <span className={`absolute top-1.5 right-1.5 h-6 w-6 rounded-full flex items-center justify-center shadow-sm ${an ? "bg-bordeaux text-white" : "bg-white/85 text-ink"}`}>
+                        {an ? <IconCheck size={13} /> : <span className="text-[16px] leading-none font-light">+</span>}
+                      </span>
+                    </button>
                     <div className="p-2">
                       <div className="text-[12.5px] font-semibold leading-tight truncate mb-1.5">{m.name}</div>
                       {an ? (
@@ -155,6 +156,11 @@ export default function BundleBox({
                 );
               })}
             </div>
+            {sichtbar < weitere.length && (
+              <button onClick={() => setSichtbar((n) => n + 8)} className="mt-3 w-full text-[13px] font-semibold text-bordeaux border border-bordeaux/30 rounded-md py-2 hover:bg-bordeaux-soft">
+                Weitere Motive anzeigen ({weitere.length - sichtbar})
+              </button>
+            )}
 
             {/* Set-Summe */}
             <div className="mt-3 rounded-lg bg-bg border border-line p-3">
