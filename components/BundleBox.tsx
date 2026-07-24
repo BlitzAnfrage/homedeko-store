@@ -124,11 +124,14 @@ export default function BundleBox({
               </div>
             </div>
 
-            {/* Weitere Motive — EXAKT dieselbe Scroll-Reihe wie der Motiv-Wechsler
-                in der AR-Vorschau (der auf dem Handy nachweislich funktioniert):
-                nur `flex overflow-x-auto`, KEIN touch-action/snap/overscroll und
-                KEIN overflow-hidden-Wrapper drumherum. */}
-            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {/* Weitere Motive — horizontale Scroll-Reihe. Anders als der AR-Wechsler
+                (der in einem Fullscreen-Modal sitzt, wo die Seite dahinter fixiert
+                ist) steckt DIESE Reihe in der normal scrollenden Produktseite. Auf
+                iOS-Safari konkurrieren dann vertikale Seiten- und horizontale Reihen-
+                Geste → touch-action:pan-x klärt eindeutig „diese Reihe pant horizontal“.
+                (Kein overflow-hidden-Wrapper drumherum — der würde iOS wieder einfrieren.) */}
+            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              style={{ touchAction: "pan-x" }}>
               {weitere.map((m) => {
                 const an = m.id in zusatz;
                 return (

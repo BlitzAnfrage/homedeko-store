@@ -69,7 +69,7 @@
 /* Touch-Press-Feedback: auf Geräten ohne Hover (Handy/Tablet) bekommen ALLE
    interaktiven Elemente ein spürbares Antipp-Feedback — sonst wirken sie „tot". */
 @media (hover: none) {
-  a:active, button:active, .card:active, .chip:active, .opt:active,
+  a:active, button:active, .chip:active, .opt:active,
   summary:active, [role="button"]:active, label:active {
     transform: scale(.975);
     opacity: .85;
