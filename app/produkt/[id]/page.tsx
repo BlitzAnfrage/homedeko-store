@@ -200,8 +200,10 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
           )}
         </div>
 
-        {/* Kaufspalte — auf Mobil direkt nach der Galerie (order-2), auf Desktop rechts */}
-        <div className="order-2 lg:order-none space-y-4 w-full">
+        {/* Kaufspalte — auf Mobil direkt nach der Galerie (order-2), auf Desktop rechts.
+            min-w-0: sonst kann die overflow-x-Reihe der Bundle-Box die Grid-Spalte
+            aufblaehen und das Layout sprengen. */}
+        <div className="order-2 lg:order-none space-y-4 w-full min-w-0">
           <div>
             <div className="flex flex-wrap gap-2 mb-2.5">
               {kats.map((k) => {

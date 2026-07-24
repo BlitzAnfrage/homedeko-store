@@ -82,13 +82,16 @@ export default function BundleBox({
     /* KEIN overflow-hidden hier: auf iOS Safari friert overflow-hidden + border-radius
        das horizontale Scrollen eines Nachfahren ein. Rundecken via rounded-xl bleiben;
        der Header bekommt seine eigene obere Rundung. */
-    <div className="mt-4 rounded-xl border-2 border-gold/40">
+    /* min-w-0 + max-w-full: sonst blaeht die overflow-x-auto-Motivreihe den
+       ganzen Container auf (Flexbox min-width:auto) und sprengt auf Desktop die
+       schmale Kaufspalte. So bleibt die Box in ihrer Spalte, die Reihe scrollt. */
+    <div className="mt-4 rounded-xl border-2 border-gold/40 min-w-0 max-w-full">
       <div className="bg-gold-soft px-4 py-2.5 flex items-center gap-2 rounded-t-[10px]">
         <span className="text-[15px]">🎨</span>
         <span className="text-[13.5px] font-bold text-gold-ink">Set-Angebot: Mehr Bilder, mehr sparen</span>
       </div>
 
-      <div className="p-4">
+      <div className="p-4 min-w-0">
         {/* Bundle-Buttons */}
         <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${stufen.length}, minmax(0,1fr))` }}>
           {stufen.map((s) => {

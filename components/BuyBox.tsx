@@ -75,7 +75,7 @@ export default function BuyBox({ p, bundleMotive = [], bundleStufen = [] }: {
   };
 
   return (
-    <div className="card p-5 lg:p-6" id="kaufbox">
+    <div className="card p-5 lg:p-6 min-w-0" id="kaufbox">
       {/* Produktart-Umschalter (Leinwand ↔ Poster im selben Angebotssatz) */}
       {hatPoster && (
         <div className="mb-5">
