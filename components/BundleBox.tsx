@@ -31,7 +31,6 @@ export default function BundleBox({
   // Größe von Bild 1 (das aktuelle Motiv)
   const [gIdxAktuell, setGIdxAktuell] = useState(() => startGroesse(aktuell));
   const [imKorb, setImKorb] = useState(false);
-  const [sichtbar, setSichtbar] = useState(8); // wie viele Motive im Gitter zeigen
 
   if (!stufen.length) return null;
 
@@ -125,14 +124,15 @@ export default function BundleBox({
               </div>
             </div>
 
-            {/* Weitere Motive — NORMALES Gitter, das mit der Seite mitscrollt.
-                KEIN eigener Scroll-Container (overflow-x/touch-action/snap) →
-                auf iOS gibt es nichts, was haken kann. */}
-            <div className="grid grid-cols-2 gap-3">
-              {weitere.slice(0, sichtbar).map((m) => {
+            {/* Weitere Motive — EXAKT dieselbe Scroll-Reihe wie der Motiv-Wechsler
+                in der AR-Vorschau (der auf dem Handy nachweislich funktioniert):
+                nur `flex overflow-x-auto`, KEIN touch-action/snap/overscroll und
+                KEIN overflow-hidden-Wrapper drumherum. */}
+            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {weitere.map((m) => {
                 const an = m.id in zusatz;
                 return (
-                  <div key={m.id} className={`rounded-xl border-2 transition-colors ${an ? "border-bordeaux" : "border-line"}`}>
+                  <div key={m.id} className={`shrink-0 w-[150px] rounded-xl border-2 transition-colors ${an ? "border-bordeaux" : "border-line"}`}>
                     <button onClick={() => toggleMotiv(m)} className="relative block w-full aspect-square overflow-hidden rounded-t-[10px]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={m.bild} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
@@ -156,11 +156,6 @@ export default function BundleBox({
                 );
               })}
             </div>
-            {sichtbar < weitere.length && (
-              <button onClick={() => setSichtbar((n) => n + 8)} className="mt-3 w-full text-[13px] font-semibold text-bordeaux border border-bordeaux/30 rounded-md py-2 hover:bg-bordeaux-soft">
-                Weitere Motive anzeigen ({weitere.length - sichtbar})
-              </button>
-            )}
 
             {/* Set-Summe */}
             <div className="mt-3 rounded-lg bg-bg border border-line p-3">
