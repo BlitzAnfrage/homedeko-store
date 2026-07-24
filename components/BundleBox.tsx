@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { euro } from "@/lib/preise";
-import { IconCart, IconCheck } from "./Icon";
+import { IconCart, IconCheck, IconChevron } from "./Icon";
 
 export type BundleGroesse = { label: string; preis: number; beliebt?: boolean };
 export type BundleMotiv = { id: string; name: string; bild: string; groessen: BundleGroesse[] };
@@ -31,6 +31,8 @@ export default function BundleBox({
   // Größe von Bild 1 (das aktuelle Motiv)
   const [gIdxAktuell, setGIdxAktuell] = useState(() => startGroesse(aktuell));
   const [imKorb, setImKorb] = useState(false);
+  const reiheRef = useRef<HTMLDivElement>(null);
+  const scrolle = (richtung: 1 | -1) => reiheRef.current?.scrollBy({ left: richtung * 320, behavior: "smooth" });
 
   if (!stufen.length) return null;
 
@@ -127,14 +129,21 @@ export default function BundleBox({
               </div>
             </div>
 
-            {/* Weitere Motive — horizontale Scroll-Reihe. Anders als der AR-Wechsler
-                (der in einem Fullscreen-Modal sitzt, wo die Seite dahinter fixiert
-                ist) steckt DIESE Reihe in der normal scrollenden Produktseite. Auf
-                iOS-Safari konkurrieren dann vertikale Seiten- und horizontale Reihen-
-                Geste → touch-action:pan-x klärt eindeutig „diese Reihe pant horizontal“.
-                (Kein overflow-hidden-Wrapper drumherum — der würde iOS wieder einfrieren.) */}
-            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              style={{ touchAction: "pan-x" }}>
+            {/* Weitere Motive — horizontale Scroll-Reihe.
+                Mobil: wischen (touch-action:pan-x). Desktop: Pfeil-Buttons zum
+                Durchklicken (Mäuse können meist nicht seitlich scrollen). */}
+            <div className="relative">
+              {/* Pfeil links — nur Desktop */}
+              <button onClick={() => scrolle(-1)} aria-label="Zurück"
+                className="hidden lg:flex absolute left-0 top-[calc(50%-24px)] -translate-y-1/2 -translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white border border-line shadow-md text-ink hover:border-bordeaux hover:text-bordeaux">
+                <span className="rotate-180"><IconChevron size={18} /></span>
+              </button>
+              <button onClick={() => scrolle(1)} aria-label="Weiter"
+                className="hidden lg:flex absolute right-0 top-[calc(50%-24px)] -translate-y-1/2 translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white border border-line shadow-md text-ink hover:border-bordeaux hover:text-bordeaux">
+                <IconChevron size={18} />
+              </button>
+              <div ref={reiheRef} className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                style={{ touchAction: "pan-x" }}>
               {weitere.map((m) => {
                 const an = m.id in zusatz;
                 return (
@@ -161,6 +170,7 @@ export default function BundleBox({
                   </div>
                 );
               })}
+              </div>
             </div>
 
             {/* Set-Summe */}
