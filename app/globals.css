@@ -75,6 +75,12 @@
     opacity: .85;
     transition: transform .08s ease, opacity .08s ease;
   }
+  /* Bundle-Motiv-Kacheln NICHT „reindrücken“ — sonst wirkt Scrollen wie ein
+     Button-Klick. Die Reihe soll sich frei horizontal wischen lassen. */
+  .bundle-kachel:active, .bundle-swipe:active {
+    transform: none;
+    opacity: 1;
+  }
 }
 
 body {

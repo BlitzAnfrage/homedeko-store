@@ -121,20 +121,28 @@ export default function BundleBox({
               </div>
             </div>
 
-            {/* Weitere Motive — große, seitlich scrollbare Karten */}
-            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {/* Weitere Motive — große, seitlich scrollbare Karten.
+                touch-action:pan-x → horizontales Wischen wird nicht als Tap
+                abgefangen; overscroll-x-contain → kein Weiterschieben der Seite. */}
+            <div
+              className="bundle-swipe flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              style={{ touchAction: "pan-x", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}
+            >
               {weitere.map((m) => {
                 const an = m.id in zusatz;
                 return (
                   <div key={m.id} className={`snap-start shrink-0 w-[150px] rounded-xl border-2 overflow-hidden transition-colors ${an ? "border-bordeaux" : "border-line"}`}>
-                    <button onClick={() => toggleMotiv(m)} className="relative block w-full aspect-square overflow-hidden">
+                    {/* Bild-Fläche: KEIN <button> (das fängt sonst die Scroll-Geste ab
+                        und bekommt das globale :active-Scale). div mit role=button. */}
+                    <div role="button" tabIndex={0} onClick={() => toggleMotiv(m)}
+                      className="bundle-kachel relative block w-full aspect-square overflow-hidden cursor-pointer">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={m.bild} alt={m.name} loading="lazy" className="w-full h-full object-cover" />
+                      <img src={m.bild} alt={m.name} loading="lazy" draggable={false} className="w-full h-full object-cover pointer-events-none" />
                       {an && <span className="absolute inset-0 bg-bordeaux/15" />}
                       <span className={`absolute top-1.5 right-1.5 h-6 w-6 rounded-full flex items-center justify-center shadow-sm transition-all ${an ? "bg-bordeaux text-white" : "bg-white/85 text-ink"}`}>
                         {an ? <IconCheck size={13} /> : <span className="text-[16px] leading-none font-light">+</span>}
                       </span>
-                    </button>
+                    </div>
                     <div className="p-2">
                       <div className="text-[12.5px] font-semibold leading-tight truncate mb-1.5">{m.name}</div>
                       {an
