@@ -122,11 +122,12 @@ export default function BundleBox({
             </div>
 
             {/* Weitere Motive — große, seitlich scrollbare Karten.
-                touch-action:pan-x → horizontales Wischen wird nicht als Tap
-                abgefangen; overscroll-x-contain → kein Weiterschieben der Seite. */}
+                KEINE touch-action-Einschränkung (der Browser entscheidet selbst
+                nach Wischrichtung: vertikal = Seite scrollt, horizontal = Reihe).
+                overscroll-x-contain verhindert nur das Weiterschieben der Seite. */}
             <div
-              className="bundle-swipe flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              style={{ touchAction: "pan-x", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}
+              className="bundle-swipe flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              style={{ overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}
             >
               {weitere.map((m) => {
                 const an = m.id in zusatz;
