@@ -68,10 +68,10 @@ export default async function ProduktSeite({ params }: { params: Promise<{ id: s
   const mr = settings.mengenrabatt;
   const bundleStufen = mr.aktiv ? [...(mr.stufen ?? [])].sort((a, b) => a.ab - b.ab) : [];
   const bundleMotive = bundleStufen.length
-    ? alle.filter((x) => x.art === "leinwand" && x.id !== p.id).map((x) => {
-        const bel = x.groessen.find((g) => g.beliebt) ?? x.groessen[0];
-        return { id: x.id, name: x.motiv.name, bild: x.bilder[0]?.klein ?? "", preis: bel.preis, groesseLabel: bel.label };
-      })
+    ? alle.filter((x) => x.art === "leinwand" && x.id !== p.id).map((x) => ({
+        id: x.id, name: x.motiv.name, bild: x.bilder[0]?.klein ?? "",
+        groessen: x.groessen.map((g) => ({ label: g.label, preis: g.preis, beliebt: !!g.beliebt })),
+      }))
     : [];
 
   const info = p.art === "tapete" ? INFO_TAPETE : p.art === "wallprint" ? INFO_WALLPRINT : INFO_LEINWAND;

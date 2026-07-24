@@ -173,7 +173,7 @@ export default function BuyBox({ p, bundleMotive = [], bundleStufen = [] }: {
       {/* Bundle-Angebot direkt auf der Produktseite (nur Leinwand + wenn Mengenrabatt aktiv) */}
       {p.art === "leinwand" && bundleStufen.length > 0 && bundleMotive.length > 0 && (
         <BundleBox
-          aktuell={{ id: p.id, name: p.motiv.name, bild: p.bilder[0]?.klein ?? "", preis: groesse.preis, groesseLabel: groesse.label }}
+          aktuell={{ id: p.id, name: p.motiv.name, bild: p.bilder[0]?.klein ?? "", groessen: p.groessen.map((g) => ({ label: g.label, preis: g.preis, beliebt: !!g.beliebt })) }}
           weitere={bundleMotive}
           stufen={bundleStufen}
         />
