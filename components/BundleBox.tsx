@@ -121,34 +121,32 @@ export default function BundleBox({
               </div>
             </div>
 
-            {/* Weitere Motive — große, seitlich scrollbare Karten.
-                KEINE touch-action-Einschränkung (der Browser entscheidet selbst
-                nach Wischrichtung: vertikal = Seite scrollt, horizontal = Reihe).
-                overscroll-x-contain verhindert nur das Weiterschieben der Seite. */}
-            <div
-              className="bundle-swipe flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              style={{ overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}
-            >
+            {/* Weitere Motive — seitlich scrollbare Karten. WICHTIG: das große
+                Bild ist REINE ANZEIGE (kein Klick-Handler), sonst fängt der
+                Browser jede Berührung als Tap-Kandidat ab und blockiert/verhakt
+                das Scrollen. Getoggelt wird NUR über das kleine +-Badge unten. */}
+            <div className="bundle-swipe flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {weitere.map((m) => {
                 const an = m.id in zusatz;
                 return (
-                  <div key={m.id} className={`snap-start shrink-0 w-[150px] rounded-xl border-2 overflow-hidden transition-colors ${an ? "border-bordeaux" : "border-line"}`}>
-                    {/* Bild-Fläche: KEIN <button> (das fängt sonst die Scroll-Geste ab
-                        und bekommt das globale :active-Scale). div mit role=button. */}
-                    <div role="button" tabIndex={0} onClick={() => toggleMotiv(m)}
-                      className="bundle-kachel relative block w-full aspect-square overflow-hidden cursor-pointer">
+                  <div key={m.id} className={`shrink-0 w-[150px] rounded-xl border-2 overflow-hidden transition-colors ${an ? "border-bordeaux" : "border-line"}`}>
+                    {/* Bild: reine Anzeige, kein onClick → Scrollen wird nicht gestört */}
+                    <div className="relative block w-full aspect-square overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={m.bild} alt={m.name} loading="lazy" draggable={false} className="w-full h-full object-cover pointer-events-none" />
-                      {an && <span className="absolute inset-0 bg-bordeaux/15" />}
-                      <span className={`absolute top-1.5 right-1.5 h-6 w-6 rounded-full flex items-center justify-center shadow-sm transition-all ${an ? "bg-bordeaux text-white" : "bg-white/85 text-ink"}`}>
-                        {an ? <IconCheck size={13} /> : <span className="text-[16px] leading-none font-light">+</span>}
-                      </span>
+                      <img src={m.bild} alt={m.name} loading="lazy" draggable={false} className="w-full h-full object-cover pointer-events-none select-none" />
+                      {an && <span className="absolute inset-0 bg-bordeaux/15 pointer-events-none" />}
+                      {an && <span className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-bordeaux text-white flex items-center justify-center shadow-sm pointer-events-none"><IconCheck size={13} /></span>}
                     </div>
                     <div className="p-2">
                       <div className="text-[12.5px] font-semibold leading-tight truncate mb-1.5">{m.name}</div>
-                      {an
-                        ? groessenSelect(m, zusatz[m.id], (gi) => setZusatzGroesse(m.id, gi))
-                        : <button onClick={() => toggleMotiv(m)} className="w-full text-[12px] font-semibold text-bordeaux border border-bordeaux/40 rounded-md py-1.5 hover:bg-bordeaux-soft">Hinzufügen</button>}
+                      {an ? (
+                        <>
+                          {groessenSelect(m, zusatz[m.id], (gi) => setZusatzGroesse(m.id, gi))}
+                          <button onClick={() => toggleMotiv(m)} className="mt-1 w-full text-[11.5px] font-medium text-muted hover:text-bordeaux">Entfernen</button>
+                        </>
+                      ) : (
+                        <button onClick={() => toggleMotiv(m)} className="w-full text-[12px] font-semibold text-bordeaux border border-bordeaux/40 rounded-md py-1.5 hover:bg-bordeaux-soft">Hinzufügen</button>
+                      )}
                     </div>
                   </div>
                 );
